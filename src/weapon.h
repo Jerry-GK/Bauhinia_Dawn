@@ -4,20 +4,12 @@ using namespace std;
 
 class Weapon
 {
-protected:
-    string name;
-    int aggress;//攻击力
-    int frequency;//攻击频率
+private:
+    string name ;
+    int attack ;
+    int occupancy ;
 public:
-    virtual ~Weapon()=0;
-};
-
-class cloth_fork:public Weapon//衣叉
-{
-
-};
-
-class Umbrella:public Weapon//雨伞
-{
-
+    Weapon(const string setname ,const int setattack);
+    string getname()const ;
+    int getattack()const ;
 };

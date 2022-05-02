@@ -13,21 +13,21 @@ class Game
 private:
     Player pl;
     GameMap game_map;
-    GAME_STAGE stage;//æ¸¸æˆé˜¶æ®µ
-    string input_box;//å½“å‰ç©å®¶åªåœ¨è¾“å…¥çš„æ–‡æœ¬ï¼ˆæœªæäº¤ï¼‰
-    string msg;//ç©å®¶åˆšæäº¤çš„æ–‡æœ¬
+    GAME_STAGE stage;//ÓÎÏ·½×¶Î
+    string input_box;//µ±Ç°Íæ¼ÒÖ»ÔÚÊäÈëµÄÎÄ±¾£¨Î´Ìá½»£©
+    string msg;//Íæ¼Ò¸ÕÌá½»µÄÎÄ±¾
 
 public:
-    void Init();//åˆå§‹åŒ–
+    void Init();//³õÊ¼»¯
 
-    void read();//è®©ç©å®¶è¾“å…¥æ–‡æœ¬,è¾“å…¥å®Œæˆï¼ˆå›è½¦ï¼‰åè°ƒç”¨submit
-    void submit();//ä»å¯¹è¯æ¡†è¯»å–ç©å®¶è¾“å…¥çš„æ–‡æœ¬ï¼ˆinput_box->msg, clear input_box, call processï¼‰
-    void process(string msg);//æ ¹æ®stageï¼Œå¤„ç†msgæ–‡æœ¬,æœ€å…³é”®çš„éƒ¨åˆ†
+    void read();//ÈÃÍæ¼ÒÊäÈëÎÄ±¾,ÊäÈëÍê³É£¨»Ø³µ£©ºóµ÷ÓÃsubmit
+    void submit();//´Ó¶Ô»°¿ò¶ÁÈ¡Íæ¼ÒÊäÈëµÄÎÄ±¾£¨input_box->msg, clear input_box, call process£©
+    void process(string msg);//¸ù¾İstage£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö
  
-    bool is_end() const;//è¿”å›æ˜¯å¦ç»“æŸï¼ˆstageæ˜¯å¦ä¸ºENDï¼‰
-    void quit();//é€€å‡ºæ¸¸æˆ
+    bool is_end() const;//·µ»ØÊÇ·ñ½áÊø£¨stageÊÇ·ñÎªEND£©
+    void quit();//ÍË³öÓÎÏ·
 
 private:
-    void show_prompt(string prompt) const;//ç”Ÿæˆæç¤ºä¿¡æ¯
+    void show_prompt(string prompt) const;//Éú³ÉÌáÊ¾ĞÅÏ¢
 
 };

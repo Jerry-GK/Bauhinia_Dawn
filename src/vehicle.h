@@ -3,25 +3,15 @@
 using namespace std;
 class Vehicle
 {
-protected:
+private:
     string name;
-    double speed;
+    int speed;
+    int move_capability ;
 public:
-    virtual ~Vehicle()=0;
+    Vehicle(const string setname ,const int setspeed , const int setmove_capability);
+    string getname() const ;
+    int getspeed() const ;
+    int getmove_capability() const ;
 };
 
-class Bike:public Vehicle
-{
-
-};
-
-class Car:public Vehicle
-{
-
-};
-
-class Boat:public Vehicle
-{
-
-};
 

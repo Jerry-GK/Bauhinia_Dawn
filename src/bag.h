@@ -8,7 +8,7 @@ class Bag
 {
 protected:
     int capacity;
-    Weapon* wep;//鍖呴噷鎵�瑁呯殑姝﹀櫒鏁扮粍
+    Weapon* wep;//包里所装的武器数组
     vector<string> others;
 
 public:

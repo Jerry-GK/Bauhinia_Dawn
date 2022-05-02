@@ -1,40 +1,89 @@
 #pragma once
-#include<string>
+#include <string>
 #include <iostream>
-#include "game_map.h"
 #include "weapon.h"
 #include "bag.h"
 #include "zombie.h"
 #include "vehicle.h"
+#include "ui.h"
+#include "game_map.h"
 #include "global.h"
 
 using namespace std;
 
+class Weapon;
+class Vehicle;
 class Zombie;
-
 class Player
 {
-protected:
+private:
     string name;
-    int aggress;//æ”»å‡»åŠ›
-    int  HP;//è¡€é‡/ä½“åŠ›
-    int speed;//ç§»åŠ¨é€Ÿåº¦
-    Bag mybag;//èƒŒåŒ…
-    Vehicle* cur_veh;//å½“å‰ä¹˜åçš„äº¤é€šå·¥å…·
-    PLAYER_STAGE pl_status;//ç©å®¶çŠ¶æ€
-    Position* pos;//ç©å®¶å½“å‰çš„ä½ç½®
+    int level ; //µÈ¼¶£¬³õÊ¼£º1£¬×î¸ßlevel£º10
+    int currentEXP ; //¾­Ñé
+    int needEXP[9]; //Éı¼¶ËùĞè¾­ÑéÊı×é 
+
+    int aggress;//¹¥»÷Á¦
+    int weaponaggress = 0 ;//ÎäÆ÷¹¥»÷Á¦ £¬³õÊ¼Ã»ÓĞÎäÆ÷ = 0 
+
+    int currentHP;//µ±Ç°ÌåÁ¦
+    int MAXHP ; //×î´óÌåÁ¦ÉÏÏŞ
+
+    int speed;//ÒÆ¶¯ËÙ¶È
+    int move_capability;//ÒÆ¶¯ÄÜÁ¦£¨Îª0Ê±Ö»ÄÜÔÚÂ½µØĞĞ×ß£¬Îª1Ê±¿ÉÒÔÁ½ÆÜ£©
+
+    Bag mybag;//±³°ü
+    Vehicle* cur_veh;//µ±Ç°³Ë×øµÄ½»Í¨¹¤¾ß
+    PLAYER_STAGE pl_status;//Íæ¼Ò×´Ì¬
+    Position* pos;//Íæ¼Òµ±Ç°µÄÎ»ÖÃ
     
 public:
     Player();
-    void pick(string item);//æ‹¾å–èƒŒåŒ…ä¸­çš„æŸç§ç‰©å“
-    void use(string item);//ä½¿ç”¨èƒŒåŒ…ä¸­çš„æŸç§ç‰©å“
+    Player(const int getcurrentHP ,const int getMAXHP, const int getspeed 
+    ,const int getmove_capability , const int* getLevelEXPneed , const string getname  = "Ğ¡Ôó" );//ÊäÈëÃû×ÖµÄ³õÊ¼»¯
+
+    //player property
+    int getAggress() const;  
+    int getMAXHP() const;
+    int getcurrentHP () const;  
+    int getspeed () const ;
+    int getmove_capability() const ;
+    void recoverHP(const int recovery); //»Ö¸´ÉúÃüÖµ
+    void gainEXP(const int EXP);//»ñµÃ¾­ÑéÖµ
+    void levelUP(const int currentlevel);//Éı¼¶ 
+    Bag get_bag();
     void set_pos(Position* p);
     void set_status(PLAYER_STAGE s);
-    void fight(Zombie *z);
-    void attack(Weapon* w, Zombie* z);//ç”¨æŸç§æ­¦å™¨æ”»å‡»ä¸§å°¸
     Position* get_pos();
     PLAYER_STAGE get_status();
+    void show_state();//ÏÔÊ¾Íæ¼ÒÊôĞÔ×´Ì¬
 
-    void show_state();//æ˜¾ç¤ºç©å®¶å±æ€§çŠ¶æ€
-    Bag get_bag();
+    //bag, item
+    void pick(string item);//Ê°È¡±³°üÖĞµÄÄ³ÖÖÎïÆ·
+
+    void use(string item);//Ê¹ÓÃ±³°üÖĞµÄÄ³ÖÖÎïÆ·
+
+    void drop(string item);//¶ªÆú±³°üÖĞµÄÄ³ÖÖÎïÆ·
+
+    void equipWeapon(Weapon* a ); //×°±¸ÎäÆ÷ £¬ÈËÎïµÄÎäÆ÷¹¥»÷Á¦Öµ = ÎäÆ÷¹¥»÷Á¦
+
+    void disequipWeapon (Weapon* a) ; //Ğ¶ÏÂÎäÆ÷ £¬ ÈËÎïµÄÎäÆ÷¹¥»÷Á¦Öµ = 0 £»
+    
+    //fight
+    void fight(Zombie *z);
+
+    void attack(Weapon* w, Zombie* z);//ÓÃÄ³ÖÖÎäÆ÷¹¥»÷É¥Ê¬
+
+    //vehicle
+    Vehicle* get_veh();
+
+    void take_vehicle (Vehicle* a); //ÉÏ³µ £¬ËÙ¶È¡¢ÒÆ¶¯ÄÜÁ¦ ±» ½»Í¨¹¤¾ß ÉèÖÃ
+
+    void get_off_vehicle();//ÏÂ³µ £¬ËÙ¶È¡¢ÒÆ¶¯ÄÜÁ¦ »Ö¸´³É³õÊ¼Öµ
+
+    void move_to(Position* p);
+
 };
+
+
+
+    

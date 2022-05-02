@@ -9,9 +9,8 @@ class Zombie
 {
 protected:
     string name;
-    int aggress;//æ”»å‡»åŠ›
-    int  HP;//è¡€é‡
-    int speed;//ç§»åŠ¨é€Ÿåº¦
+    int  zombieaggress;//¹¥»÷Á¦
+    int  HP;//ÑªÁ¿
 
 public:
     virtual void attack(Player* p);
