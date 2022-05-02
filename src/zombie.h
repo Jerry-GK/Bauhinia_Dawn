@@ -9,10 +9,12 @@ class Zombie
 {
 protected:
     string name;
-    int  zombieaggress;//攻击力
+    int  aggress;//攻击力
     int  HP;//血量
+    int frequency;//攻击速度
 
 public:
+    virtual void show();
     virtual void attack(Player* p);
     virtual ~Zombie();
 

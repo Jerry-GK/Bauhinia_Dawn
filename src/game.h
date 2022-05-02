@@ -13,21 +13,21 @@ class Game
 private:
     Player pl;
     GameMap game_map;
-    GAME_STAGE stage;//ÓÎÏ·½×¶Î
-    string input_box;//µ±Ç°Íæ¼ÒÖ»ÔÚÊäÈëµÄÎÄ±¾£¨Î´Ìá½»£©
-    string msg;//Íæ¼Ò¸ÕÌá½»µÄÎÄ±¾
+    GAME_STAGE stage;//ï¿½ï¿½Ï·ï¿½×¶ï¿½
+    string input_box;//ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Î´ï¿½á½»ï¿½ï¿½
+    string msg;//ï¿½ï¿½Ò¸ï¿½ï¿½á½»ï¿½ï¿½ï¿½Ä±ï¿½
 
 public:
-    void Init();//³õÊ¼»¯
+    void Init();//ï¿½ï¿½Ê¼ï¿½ï¿½
 
-    void read();//ÈÃÍæ¼ÒÊäÈëÎÄ±¾,ÊäÈëÍê³É£¨»Ø³µ£©ºóµ÷ÓÃsubmit
-    void submit();//´Ó¶Ô»°¿ò¶ÁÈ¡Íæ¼ÒÊäÈëµÄÎÄ±¾£¨input_box->msg, clear input_box, call process£©
-    void process(string msg);//¸ù¾Ýstage£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö
+    void read();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½submit
+    void submit();//ï¿½Ó¶Ô»ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½input_box->msg, clear input_box, call processï¿½ï¿½
+    void process(string msg);//ï¿½ï¿½ï¿½ï¿½stageï¿½ï¿½ï¿½ï¿½ï¿½ï¿½msgï¿½Ä±ï¿½,ï¿½ï¿½Ø¼ï¿½ï¿½Ä²ï¿½ï¿½ï¿½
  
-    bool is_end() const;//·µ»ØÊÇ·ñ½áÊø£¨stageÊÇ·ñÎªEND£©
-    void quit();//ÍË³öÓÎÏ·
+    bool is_end() const;//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½stageï¿½Ç·ï¿½ÎªENDï¿½ï¿½
+    void quit();//ï¿½Ë³ï¿½ï¿½ï¿½Ï·
 
 private:
-    void show_prompt(string prompt) const;//Éú³ÉÌáÊ¾ÐÅÏ¢
+    void show_prompt(string prompt) const;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ï¢
 
 };

@@ -7,11 +7,13 @@
 class Bag
 {
 protected:
-    int capacity;
-    Weapon* wep;//包里所装的武器数组
-    vector<string> others;
+    int max_capacity;
+    int cur_capacity;
+    vector<string> items;
 
 public:
     Bag();
     void show();
+    void add(string item);
+    void del(string item);
 };

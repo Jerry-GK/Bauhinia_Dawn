@@ -16,7 +16,7 @@ void Game::Init()
     game_map.add_pos(p);
 
     p.set("dor gate",0,0);//ËÞÉáÃÅ¿Ú
-    p.add_status(UNKNOWN);
+    p.add_status(GATE_FIGHT);
     //
     game_map.add_pos(p);
 
@@ -51,7 +51,7 @@ void Game::Init()
     game_map.add_pos(p);
 
     //init player
-    pl.set_pos(game_map.get_pos("dorm"));
+    pl.move_to(game_map.get_pos("dorm"));
 }
 
 void Game::read()
@@ -103,9 +103,14 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         this->pl.use(msg.substr(3,msg.length()-3));
         return;
     }
+    else if(msg.find("drop")==0)
+    {
+        this->pl.drop(msg.substr(3,msg.length()-4));
+        return;
+    }
 
     //·ÇÈÎºÎ³¡¾°Ö®ÏÂ¶¼¿ÉÖ´ÐÐµÄÖ¸Áî
-    else if(pl.get_pos()->get_name()=="dorm")
+    else if(pl.get_pos()->get_name()=="dorm")//Scene 1: Dormitory
     {
         if(pl.get_status()==DOR_WAKE_UP)
         {
@@ -156,18 +161,18 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="goto market")
             {
-                pl.set_pos(game_map.get_pos("Market"));
+                pl.move_to(game_map.get_pos("Market"));
                 show_info(info_to_market);
                 return;
             }
             else if(msg=="hint")
             {
-                cout<<"ÊäÈëlook¹Û²ìËÞÉá£¬ÊäÈëpick forkÊ°È¡ÒÂ²æ£¬ÊäÈëpick umbrellaÊ°È¡ÓêÉ¡£¬ÊäÈëgoto marketÇ°Íù½ÌÓý³¬ÊÐ"<<endl;
+                cout<<"look:¹Û²ìËÞÉá\npick forkÊ°È¡ÒÂ²æ\npick umbrellaÊ°È¡ÓêÉ¡\ngoto marketÇ°Íù½ÌÓý³¬ÊÐ"<<endl;
                 return;
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="Market")
+    else if(pl.get_pos()->get_name()=="Market")//Scene 2: Market
     {
         if(pl.get_status()==MARKET_SEARCH)
         {
@@ -179,7 +184,11 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             else if(msg=="pick bread")
             {
                 pl.pick("bread");
-                show_info("³É¹¦Ê°È¡Ãæ°ü");
+                return;
+            }
+            else if(msg=="pick knife")
+            {
+                pl.pick("knife");
                 return;
             }
             else if(msg=="ask")
@@ -189,31 +198,105 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="goto gate")
             {
-                pl.set_pos(game_map.get_pos("dor gate"));
+                pl.move_to(game_map.get_pos("dor gate"));
                 show_info(info_to_gate);
                 return;
             }
             else if(msg=="hint")
             {
-                cout<<"ÊäÈëlook²é¿´³¬ÊÐÇé¿ö£¬ÊäÈëpick breadÊ°È¡Ãæ°ü£¬ÊäÈëaskÑ¯ÎÊÊÕ»ñÔ±Çé¿ö¡£\
-                \nÊäÈëuse bread¿ÉÒÔ³ÔµôÒ»¸öÊ°È¡µÄÃæ°ü²¹³äÌåÁ¦£¬ÊäÈëgoto gate¿ÉÒÔÈ¥Ñ§Ô°ÃÅ¿Ú£¨½¨Òé³ÔÍêÃæ°ü¡¢Ñ¯ÎÊºóÔÙÈ¥£©"<<endl;
+                cout<<"look:²é¿´³¬ÊÐÇé¿ö\npick bread:Ê°È¡Ãæ°ü\nask:Ñ¯ÎÊÊÕ»ñÔ±Çé¿ö\n"
+                "use bread:¿ÉÒÔ³ÔµôÒ»¸öÊ°È¡µÄÃæ°ü²¹³äÌåÁ¦\n"
+                "pick knife: ¹ºÂòÒ»°ÑÐ¡µ¶\ngoto gate:¿ÉÒÔÈ¥Ñ§Ô°ÃÅ¿Ú£¨½¨Òé³ÔÍêÃæ°ü¡¢Ñ¯ÎÊºóÔÙÈ¥£©"<<endl;
                 return;
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="dor gate")
+    else if(pl.get_pos()->get_name()=="dor gate")//Scene 3: Gate of the dormitory, beside the road
     {
-        
+        Zombie* z;
+        z=new Zombie;
+        if(pl.get_status()==GATE_FIGHT)
+        {
+            if(msg=="look")
+            {
+                z->show();
+                return;
+            }
+            else if(msg=="escape")
+            {
+                pl.move_to(game_map.get_pos("Market"));
+                cout<<"ÄãÀÇ±·µØÌÓ»ØÁË½ÌÓý³¬ÊÐ,»¹ºÃÉ¥Ê¬Ã»ÓÐ×·¹ýÀ´¡£¿´À´»¹ÊÇµÃ×¼±¸µãÎï×Ê²ÅÄÜÓëÉ¥Ê¬ÔÙÕ½¡£"<<endl;
+                delete z;
+                return;
+            }
+            else if(msg=="fight")
+            {
+                //Õ½¶·Âß¼­
+                pl.fight(z);
+                pl.set_status(GATE_AFTER_FIGHT);
+                show_info(info_fight_suc);
+                delete z;
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´É¥Ê¬ÐÅÏ¢\nescape:ÌÓ»Ø³¬ÊÐ\nfight:Ó­Õ½\n½¨ÒéÊ¹ÓÃuse <ÎäÆ÷Ãû> Ö¸Áî£¬Åä±¸ÎäÆ÷ºóÔÙÕ½"<<endl;
+                delete z;
+                return;
+            }
+        }
+        if(pl.get_status()==GATE_AFTER_FIGHT)
+        {
+            if(msg=="look")
+            {
+                cout<<"ÄãÏòËÄÖÜ¿´ÁË¿´£¬·¢ÏÖÖ»ÓÐÒ»Ð©¶«µ¹Î÷ÍáµÄ¹²Ïíµ¥³µ£¬Ò»¸öÆô¶¯×ÅµÄÐ¡¹ê£¬ºÍÍ£ÔÚÂ·ÅÔµÄÒ»Ð©¹Ø×Å³µÃÅµÄË½¼Ò³µ¡£"<<endl;
+                return;
+            }
+            else if(msg=="take bike")
+            {
+                Vehicle* v= new Vehicle("×ÔÐÐ³µ",20,10);
+                pl.take_vehicle(v);
+                return;
+            }
+            else if(msg=="take e-bike")
+            {   
+                Vehicle* v= new Vehicle("Ð¡¹ê",30,10);
+                pl.take_vehicle(v);
+                return;               
+            }
+            else if(msg=="take car")
+            {
+                cout<<"ÄãÃ»ÓÐ³µÔ¿³×,ÎÞ·¨³Ë×øË½¼Ò³µ£¡"<<endl;
+                return;
+            }
+            else if(msg=="goto west building")
+            {
+                pl.move_to(game_map.get_pos("west building"));
+                show_info(info_goto_west);
+                return;
+            }
+            else if(msg=="get off")
+            {
+                pl.get_off_vehicle();
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´ÂíÂ·Çé¿ö\ntake bike: ÆïÉÏ×ÔÐÐ³µ\ntake e-bike:ÆïÉÏÐ¡¹ê\ntake car: ³ËÆû³µ\n"
+                "get off: Àë¿ª½»Í¨¹¤¾ß\ngoto west building: È¥Î÷½Ì"<<endl;
+                return;
+            }
+        }
     }
-    else if(pl.get_pos()->get_name()=="west building")
+    else if(pl.get_pos()->get_name()=="west building")//Scene 4: West teaching building
     {
 
     }
-    else if(pl.get_pos()->get_name()=="biolab")
+    else if(pl.get_pos()->get_name()=="biolab")//Scene 5: Biology laboratory
     {
 
     }
-    else if(pl.get_pos()->get_name()=="roof")
+    else if(pl.get_pos()->get_name()=="roof")//Scene 6: The roof of the old 
     {
 
     }

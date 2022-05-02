@@ -1,5 +1,6 @@
 #pragma once
-#include<string>
+#include <string>
+
 using namespace std;
 
 static const string info_help=
@@ -10,6 +11,7 @@ check: 查看自身属性状态(通用)\n\
 map: 查看地图(通用)\n\
 bag: 查看当前背包内容(通用)\n\
 use <物品英文名>: 使用背包中的物品(通用)\n\
+drop <物品英文名>: 丢弃背包中的物品(通用)\n\
 hint: 给出当前正确操作提示(通用)\n\
 quit: 退出游戏(通用)";
 
@@ -32,6 +34,9 @@ static const string info_look_market="你在超市四周看了看，庆幸的是，售货员没有变
 static const string info_saleman="售货员告诉你：可以去西教看看有没有幸存者。";
 static const string info_to_gate="你离开超市，悄悄来到门口，可是还是被丧尸发现了，一只丧尸向你扑来，你似乎无处可逃了......";
 
+static const string info_fight_suc="你用尽了全力，丧尸总算在你眼前倒下了，你也气喘吁吁，还好没有被咬到。你来到学园门前的路旁，发现四周空无一人，只有\
+远处隐约有几只丧尸在漫无目的的走着。你想去西教，可不确定自己的体力能否支撑自己走到。";
+static const string info_goto_west="你来到了西教...";
 
 enum GAME_STAGE//游戏当前状态的枚举类型
 {
@@ -49,5 +54,15 @@ enum PLAYER_STAGE
     DOR_TO_LOOK_OUTSIDE,
     DOR_TO_CHOOSE,
     MARKET_SEARCH,
-    MARKET_ASK
+    MARKET_ASK,
+    GATE_FIGHT,
+    GATE_AFTER_FIGHT
 };
+
+
+//角色：
+const int initial_speed = 1 ; // 初始移动速度
+const int initial_move_capability = 0 ;// 初始移动能力
+const int initial_currentHP = 20 ;// 初始当前体力
+const int initial_MAXHP = 40 ;// 初始最大体力
+const int initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
