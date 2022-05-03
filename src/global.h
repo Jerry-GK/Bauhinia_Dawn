@@ -36,7 +36,7 @@ static const string info_to_gate="你离开超市，悄悄来到门口，可是还是被丧尸发现了
 
 static const string info_fight_suc="你用尽了全力，丧尸总算在你眼前倒下了，你也气喘吁吁，还好没有被咬到。你来到学园门前的路旁，发现四周空无一人，只有\
 远处隐约有几只丧尸在漫无目的的走着。你想去西教，可不确定自己的体力能否支撑自己走到。";
-static const string info_goto_west="你来到了西教...";
+static const string info_goto_west="你来到了西教，眼前的景象让你大吃一惊......";
 
 enum GAME_STAGE//游戏当前状态的枚举类型
 {
@@ -48,15 +48,27 @@ enum GAME_STAGE//游戏当前状态的枚举类型
 
 enum PLAYER_STAGE
 {
-    //dormitory
     UNKNOWN,
+    //dormitory
     DOR_WAKE_UP,
     DOR_TO_LOOK_OUTSIDE,
     DOR_TO_CHOOSE,
+    //market
     MARKET_SEARCH,
     MARKET_ASK,
+    //dor gate
     GATE_FIGHT,
-    GATE_AFTER_FIGHT
+    GATE_AFTER_FIGHT,
+    //west building
+    WEST_INTO_BUILDING,
+    WEST_MEET,
+    WEST_FIGHT,
+    WEST_CHECK,
+    //bio lab
+    BIO_INTO_BUILDING,
+    BIO_MEET,
+    BIO_LEAVE
+    //roof
 };
 
 
@@ -66,3 +78,4 @@ const int initial_move_capability = 0 ;// 初始移动能力
 const int initial_currentHP = 20 ;// 初始当前体力
 const int initial_MAXHP = 40 ;// 初始最大体力
 const int initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
+const int initial_Bag_occupancy = 999999;

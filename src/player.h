@@ -8,6 +8,7 @@
 #include "ui.h"
 #include "game_map.h"
 #include "global.h"
+#include "food.h"
 
 using namespace std;
 
@@ -32,7 +33,8 @@ private:
     int move_capability;//移动能力（为0时只能在陆地行走，为1时可以两栖）
 
     Bag mybag;//背包
-    Vehicle* cur_veh;//当前乘坐的交通工具
+    Vehicle* cur_veh;//当前乘坐的交通工具（NULL表示双脚）
+    Weapon* cur_wep;//当前的武器（NULL表示双手）
     PLAYER_STAGE pl_status;//玩家状态
     Position* pos;//玩家当前的位置
     
@@ -50,7 +52,7 @@ public:
     void recoverHP(const int recovery); //恢复生命值
     void gainEXP(const int EXP);//获得经验值
     void levelUP(const int currentlevel);//升级 
-    Bag get_bag();
+    Bag get_bag() const;
     void set_pos(Position* p);
     void set_status(PLAYER_STAGE s);
     Position* get_pos();
@@ -66,7 +68,7 @@ public:
 
     void equipWeapon(Weapon* a ); //装备武器 ，人物的武器攻击力值 = 武器攻击力
 
-    void disequipWeapon (Weapon* a) ; //卸下武器 ， 人物的武器攻击力值 = 0 ；
+    void disequipWeapon () ; //卸下当前武器 ， 人物的武器攻击力值 = 0 ；
     
     //fight
     void fight(Zombie *z);

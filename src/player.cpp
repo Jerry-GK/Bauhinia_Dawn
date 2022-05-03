@@ -15,6 +15,7 @@ Player::Player()
         needEXP[i] = initial_EXP[i] ;
     }
     cur_veh = NULL ;
+    cur_wep=NULL;
     pl_status = UNKNOWN;
     pos=NULL;
 }
@@ -44,22 +45,31 @@ int Player::getmove_capability() const
     return move_capability ;
 }
 
-void Player::equipWeapon(Weapon* a)
+void Player::equipWeapon(Weapon* a ) //装备武器
 {
     weaponaggress = a->getattack() ;
-    cout<<"装备武器"<<a->getname();
+    cur_wep =  a ;
+    cout << "装备了武器：" << a->getname() << " ,武器攻击力为：" << a->getattack() << endl << endl; 
 }
 
-void Player::disequipWeapon (Weapon* a)  //卸下武器 ， 人物的武器攻击力值 = 0 ；
+void Player::disequipWeapon () //装备武器
 {
+    if(cur_wep==NULL)
+    {
+        cout<<"当前未装备武器"<<endl;
+        return;
+    }
     weaponaggress = 0 ;
-    cout<<"丢下武器："<<a->getname();
+    cout << "卸下了武器：" << cur_wep->getname() << " ,武器攻击力为：" << cur_wep->getattack() << endl << endl; 
+    delete cur_wep ;
+    cur_wep = NULL ;
 }
 void Player::take_vehicle (Vehicle* a) //上车 ，速度、移动能力 被 交通工具 设置
 {
     if(cur_veh!=NULL)
     {
         cout<<"你已经在"<<cur_veh->getname()<<"上了，请先离开该交通工具。"<<endl;
+        return;
     }
     speed = a->getspeed() ;
     move_capability = a->getmove_capability() ;
@@ -135,6 +145,7 @@ PLAYER_STAGE Player::get_status()
 void Player::show_state()//显示玩家属性状态
 {
     string str_veh=(cur_veh==NULL)?"脚":cur_veh->getname();
+    string str_wep=(cur_wep==NULL)?"赤手空拳":cur_wep->getname();
     cout<<"玩家属性："<<endl;
     cout<<"姓名："<<name<<endl;
     cout<<"等级："<<level<<endl;
@@ -145,10 +156,11 @@ void Player::show_state()//显示玩家属性状态
     cout<<"当前体力/最大体力： "<<currentHP<<"/"<<MAXHP<<endl;
     cout<<"移动速度："<<speed<<endl;
     cout<<"交通工具："<<str_veh<<endl;
+    cout<<"当前武器："<<str_wep<<endl;
     cout<<"当前位置："<<pos->get_name()<<endl;
 }
 
-Bag Player::get_bag()
+Bag Player::get_bag() const
 {
     return this->mybag;
 }
@@ -158,6 +170,96 @@ Vehicle* Player::get_veh()
     return this->cur_veh;
 }
 
+void Player::pick(string item)
+{
+    if (isFood(item) )
+    {
+        Food a(item) ;
+        if (mybag.add(item,a.getoccupancy() ) )
+        {
+            cout << "拾取了 " << item << " 已用空间：" << mybag.getcurcapacity() << endl;
+        }
+        else
+        {
+            cout << "拾取失败 需要空间：" << a.getoccupancy() 
+            << "  ，当前空闲空间： " <<  mybag.getmaxcapacity() - mybag.getcurcapacity() ;
+        }
+    }
+    else if (isWeapon (item))
+    {
+        Weapon a(item) ;
+        if (mybag.add(item,a.getoccupancy() ) )
+        {
+            cout << "拾取了 " << item << " 已用空间：" << mybag.getcurcapacity() << endl;
+        }
+        else 
+        {
+            cout << "拾取失败 需要空间：" << a.getoccupancy() 
+            << "  ，当前空闲空间： " <<  mybag.getmaxcapacity()- mybag.getcurcapacity() ;
+        }
+    }
+}
+
+void Player::use(string item)
+{
+    if ( isFood(item) )
+    {
+        if (mybag.find(item))
+        {
+            Food a(item) ;
+            recoverHP(a.geteffect());
+            mybag.det(item);
+            cout << "使用了 " << item << " 回复体力至：" << currentHP << endl;
+            //使用食物 恢复体力 食物消失
+        }
+        else
+        {
+            cout << "使用失败！背包内不存在这个物品" << endl;
+        }
+    }
+    else if (isWeapon (item ) )
+    {
+        if (mybag.find(item ))
+        {
+            disequipWeapon();
+            Weapon* p =  new Weapon (item) ;
+            equipWeapon(p);
+            cout<<"装备了武器："<<cur_wep->getname()<<endl;
+        }
+        else 
+        {
+            cout << "使用失败！背包内不存在这个物品" << endl;
+        }
+    }
+    else
+    {
+        cout<<"无效指令：不存在该类物品！"<<endl;
+    }
+}
+
+void Player::drop(string item)
+{
+    if (mybag.find(item))
+    {
+        if (isFood(item))
+        {
+            mybag.det(item);
+        }
+        else if (isWeapon(item))
+        {
+            if (item == cur_wep->getname())
+            {
+                disequipWeapon();
+            }
+            mybag.det(item);
+        }
+        cout << "丢弃了 " << item << " ，当前背包容量：" << mybag.getcurcapacity() << endl;
+    }
+    else
+    {
+        cout << "丢弃失败！背包内不存在这个物品" << endl;
+    }
+}
 
 //--------------------------------------to be implemented------------------------------------------------
 void Player::move_to(Position* p)
@@ -166,26 +268,7 @@ void Player::move_to(Position* p)
     //根据当前pos与目标p的距离(根据xy坐标)，以及速度，计算体力变化的逻辑
 }
 
-void Player::pick(string item)
-{
-    cout<<"拾取"<<item<<endl;
-}
-
-void Player::use(string item)
-{
-    cout<<"使用"<<item<<endl;
-    /*分析item字符串
-    食物名（bread）：消耗，恢复体力
-    武器名：调用equipweapon拿起相应武器
-    */
-}
-
-void Player::drop(string item)
-{
-    cout<<"丢弃"<<item<<endl;
-}
-
-void fight(Zombie *z)
+void Player::fight(Zombie *z)
 {
     //与丧尸的战斗逻辑
 }

@@ -21,12 +21,12 @@ void Game::Init()
     game_map.add_pos(p);
 
     p.set("west building",0,0);//Î÷½Ì
-    p.add_status(UNKNOWN);
+    p.add_status(WEST_INTO_BUILDING);
     //
     game_map.add_pos(p);
 
     p.set("bio lab",0,0);//ÉúÎïÊµÑéÊÒ
-    p.add_status(UNKNOWN);
+    p.add_status(BIO_INTO_BUILDING);
     //
     game_map.add_pos(p);
     
@@ -100,12 +100,12 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
     }
     else if(msg.find("use")==0)
     {
-        this->pl.use(msg.substr(3,msg.length()-3));
+        this->pl.use(msg.substr(4,msg.length()-4));
         return;
     }
     else if(msg.find("drop")==0)
     {
-        this->pl.drop(msg.substr(3,msg.length()-4));
+        this->pl.drop(msg.substr(5,msg.length()-5));
         return;
     }
 
@@ -150,13 +150,11 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             else if(msg=="pick fork")
             {
                 pl.pick("fork");
-                show_info("ÒÂ²æÒÑÊ°È¡£¡");
                 return;
             }
             else if(msg=="pick umbrella")
             {
                 pl.pick("umbrella");
-                show_info("ÓêÉ¡ÒÑÊ°È¡£¡");
                 return;
             }
             else if(msg=="goto market")
@@ -254,13 +252,13 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="take bike")
             {
-                Vehicle* v= new Vehicle("×ÔÐÐ³µ",20,10);
+                Vehicle* v= new Vehicle("×ÔÐÐ³µ",20,0);
                 pl.take_vehicle(v);
                 return;
             }
             else if(msg=="take e-bike")
             {   
-                Vehicle* v= new Vehicle("Ð¡¹ê",30,10);
+                Vehicle* v= new Vehicle("Ð¡¹ê",30,0);
                 pl.take_vehicle(v);
                 return;               
             }
@@ -272,6 +270,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             else if(msg=="goto west building")
             {
                 pl.move_to(game_map.get_pos("west building"));
+                pl.get_off_vehicle();
                 show_info(info_goto_west);
                 return;
             }
@@ -290,11 +289,236 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
     }
     else if(pl.get_pos()->get_name()=="west building")//Scene 4: West teaching building
     {
-
+        if(pl.get_status()==WEST_INTO_BUILDING)
+        {
+            if(msg=="look")
+            {
+                cout<<"Î÷½ÌµÄÒ»Â¥Àï£¬µ½´¦¶¼ÊÇÑª¼£ºÍ²ÐÖ«£¬±é²¼ËÄ´¦£¬Äã²îµãÅ»ÍÂ¡£Â¥ÉÏ´«³öÕóÕóÉ¥Ê¬µÄË»ºðÉù£¬¿´À´É¥Ê¬ËÆºõ¸Õ°ÑÕâÀïÉ¨µ´Ò»¿Õ¡£"
+                        "ÄãÍûÏòÇ½ÉÏÏÔÊ¾½ÌÊÒÕ¼×ùÂÊµÄ´óÆÁ£º0%£¬0%£¬0%...£¬ËùÓÐÈË¶¼ËÀÁËÂð£¿ÄãÏÝÈëÁË¾øÍû¡£Í»È»Äã¿´µ½ÁËÒ»ÐÐ×Ö£ºÎ÷1-404£¬Õ¼×ùÂÊ1%"
+                        "Óë´ËÍ¬Ê±£¬ÄãÌýµ½Â¥ÉÏÓÐÈËº°£º¾ÈÃü£¬ÓÐÈËÂð£¿ÄãÊ®·Ö¼¤¶¯£¬Ô­À´³ýÁË×Ô¼º»¹ÓÐÆäËûÐÒ´æÕß£¡µ«ÊÇÌý×ÅÂ¥ÉÏÉ¥Ê¬µÄËÀË»ºð£¬Äã"
+                        "ÏÝÈëÁËÓÌÔ¥..."<<endl;
+                return;
+            }
+            else if(msg=="search")
+            {
+                pl.set_status(WEST_MEET);
+                cout<<"ÄãõæÊÖõæ½ÅµØÅÀÉÏÂ¥ÌÝ£¬²»±»É¥Ê¬·¢ÏÖ¡£ºÃ²»ÈÝÒ×À´µ½ÁËÎ÷1-404ÃÅ¿Ú£¬ÀïÃæÈ´Òì³£°²¾²£¬ÄãÐ¡ÐÄÒíÒíµØÌ½¹ýÍ·È¥£¬·¢ÏÖÀïÃæÓÐÒ»¸öÅ®Éú£¡"
+                        "µ«ÄãÒ²²»È·¶¨ËýÊÇ²»ÊÇÉ¥Ê¬¡£Ëý¼ûÁËÄã£¬Ò²Ê®·Öº¦ÅÂ£¬¿ª¿ÚÎÊµ½£ºÄã£¬ÄãÃ»ÓÐ±»¸ÐÈ¾°É¡£ÄãËÉÁËÒ»¿ÚÆø£¬Ëµµ½£ºÃ»ÓÐÃ»ÓÐ£¬ÎÒÒ²ÊÇ¸ÕÀ´µ½ÕâµÄ,"
+                        "ÕâÀïµ½µ×·¢ÉúÁËÊ²Ã´£¿Ëý¼ûÄã²»ÊÇÉ¥Ê¬£¬±ã×ßÁË¹ýÀ´£¬Ëµµ½£ºÎÒ×òÍíÀ´Î÷½Ì×ÔÏ°£¬½á¹ûË¯×ÅÁË£¬ÍíÉÏ10µã¶àµÄÊ±ºò£¬Ìýµ½ÍâÃæÒ»ÕóÔê¶¯£¬"
+                        "½Ó×Å¾Í³öÏÖÁËÒ»Èº¿ÉÅÂµÄÉ¥Ê¬£¬¼ûÈË¾ÍÒ§£¬ÔÚÕâÀï×ÔÏ°µÄÍ¬Ñ§ºÜ¶à¶¼±»...¡£ÎÒÏÅ»µÁË£¬ÕÒÁË¸ö½ÌÊÒ£¬¹ØÁËµÆ£¬¶ãÁËÆðÀ´£¬Ò»Ö±²»¸Ò³öÈ¥¡£"<<endl;
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´Î÷½ÌÇé¿ö\nsearch: Ñ°ÕÒÐÒ´æÕß"<<endl;
+                return;
+            }
+        }
+        else if(pl.get_status()==WEST_MEET)
+        {
+            if(msg=="look")
+            {
+                cout<<"ÑÛÇ°µÄÕâ¸öÅ®Éú£¬¿´ÆðÀ´Ê®·ÖÐéÈõ¡¢º¦ÅÂ£¬²»ÏñÊÇÔÚËµ»Ñ¡£ÃÅ¿ÚÓÐÉ¥Ê¬µÄõâ²½Éù¡£"<<endl;
+                return;
+            }
+            else if(msg=="give bread")
+            {
+                cout<<"Äã°ÑÃæ°üµÝ¸øÁËËý£¬¸æËßËýÄã½ÐÐ¡Ôó¡£ËýÁ¬Ã¦µÀÐ»£¬Ëµµ½£ºÎÒ½ÐÐ¡Óï£¬»¹ºÃÓÐÐÒ´æÕß£¬ÒªÊÇÖ»Ê£ÎÒÒ»¸öÈËÎÒÕæ²»ÖªµÀ¸ÃÔõÃ´°ì¡£"
+                        "²»¹ýÎÒÃÇ×ÜÔÚ½ÌÊÒµÈ×ÅÒ²²»ÊÇ°ì·¨£¬µÃÏë°ì·¨ÕÒÏßË÷ÌÓ³öÈ¥°¡£¡ÄãÌ¾ÁËÌ¾Æø£¬Ëµ£ºÃ»°ì·¨£¬Ñ§Ð£µÄËùÓÐ"
+                        "³ö¿ÚµÄ±£°²¶¼ÒÑ¾­±»É¥Ê¬¸ÐÈ¾ÁË£¬ÃÅ¿Ú¾Û¼¯ÁË´óÁ¿Ã»ÓÐÀ¶ÂëµÄÉ¥Ê¬£¬ÎÒÃÇ³ö²»È¥µÄ¡£"
+                        "ËýËµ£º¼ÈÈ»ÕâÑù£¬ÎÒÃÇ±ØÐëµÃÕÒÒ»ÕÒÉ¥Ê¬²¡¶¾±¬·¢µÄÏßË÷ÁË¡£"<<endl;
+                pl.drop("bread");
+                return;
+            }
+            else if(msg=="leave")
+            {
+                cout<<"Äã´ø×ÅÐ¡Óï×ß³ö½ÌÊÒ£¬ÏëÒªÑ°ÕÒÏßË÷£¬µ«É¥Ê¬ËÆºõ²»Í¬Òâ..."<<endl;
+                pl.set_status(WEST_FIGHT);
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´ËýµÄÇé¿ö\ngive bread: ¸øËýÃæ°ü²¹³äÌåÁ¦£¬Ëµ²»¶¨Ëý»áËµÐ©Ê²Ã´\nleave: ×ß³ö½ÌÊÒÑ°ÕÒÏßË÷"<<endl;
+                return;
+            }
+        }
+        else if(pl.get_status()==WEST_FIGHT)
+        {
+            Zombie* z=new Roll_Zombie();
+            if(msg=="look")
+            {
+                cout<<"Ò»Ö»É¥Ê¬ÊÖÀïÄÃ×ÅÒ»±¾Êé£¬ÏëÄã³å¹ýÀ´¡£ÔãÁË£¬ÊÇ¾íÍõÉ¥Ê¬£¡"<<endl;
+                return;
+            }
+            else if(msg=="fight")
+            {   
+                pl.fight(z);
+                pl.set_status(WEST_CHECK);
+                cout<<"·Ñ¾¢ÁË¾ÅÅ£¶þ»¢Ö®Á¦×ÜËã»÷°ÜÁË¾íÍõÉ¥Ê¬£¬¾íÍõÕæ¿ÉÅÂ¡£¿´×Åµ¹ÔÚÑÛÇ°µÄÉ¥Ê¬£¬ÄãºÍÐ¡ÓïÏÝÈë³ÁË¼"<<endl;
+                return;
+            }
+            else if(msg=="escape")
+            {
+                pl.set_status(WEST_MEET);
+                cout<<"Äã°ÑÃÅÒ»¹Ø£¬ÌÓ»ØÁË½ÌÊÒÀïÃæ"<<endl;
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´×ßÀÈÇé¿ö\nfight:ÓëÉ¥Ê¬×÷Õ½\nescape: ÌÓ»Øµ½½ÌÊÒ"<<endl;
+                return;
+            }
+        }
+        else if(pl.get_status()==WEST_CHECK)
+        {
+            if(msg=="look")
+            {
+                cout<<"ÑÛÇ°µÄÉ¥Ê¬Ë«Ä¿Ô²Õö£¬Í··¢²»¶à¡£Ð¡ÓïÔÚÅÔ±ßËµ£º¸ç¸çºÃÀ÷º¦£¡Õâ¸öÉ¥Ê¬¿´ÆðÀ´Ïñ¸öÀÏ²©,Òª²»Òª¼ì²éËûÒ»ÏÂÄØ£¿"<<endl;
+                return;
+            }
+            else if(msg=="search")
+            {
+                cout<<"ÄãËÑÁËËÑËû£¬ÕÒµ½ÁËËûµÄÊÖ»ú£¬É¨ÁËÉ¨ËûµÄÁ³£¬Íêµ°£¬±ä³ÉÉ¥Ê¬Ì«³óÉ¨²»³öÀ´¡£Ã»°ì·¨£¬ÓÃËûµÄÖ¸ÎÆ½âËøÁËÊÖ»ú"
+                        "ºÃÏñÃ»Ê²Ã´ÌØ±ðµÄ¶«Î÷¡£Äã´ò¿ªÎ¢ÐÅ£¬¶¼ÊÇ¸úµ¼Ê¦ºÍÊµÑéÊÒÍ¬Ñ§µÄ¹ØÓÚ¿ÆÑÐµÄÁÄÌì£¬Á¬¸öÃÃ×Ó¶¼Ã»ÓÐ£¬¹ûÈ»ÊÇµ¥ÉíÀÏ²©¡£"
+                        "Í»È»£¬Ð¡ÓïÔÚÅÔ±ß·¢ÏÖÁËÒ»µã¶ËÄß£ºÄã¿´ÄÇ¸ö×î½üµÄÒ»ÌõÏûÏ¢£¬×òÍíÍíÉÏ9µã£¬µ¼Ê¦½ÐËûÈ¥ÊµÑéÊÒ£¬È»ºóËû¾ÍÔÙÃ»ÓÐÆäËûÏûÏ¢ÁË¡£"
+                        "ÄãÏÝÈë³ÁË¼£¬ÔÙ×ÐÏ¸Ò»¿´£¬Ô­À´ÊÇÉúÎïÏµµÄÀÏ²©£¬¶øËûµÄÊµÑéÊÒËÆºõÓëÈËÌåµÄ×ÔÓú»úÀíÏà¹Ø¡£Ð¡ÓïËµ£ºÒª²»ÎÒÃÇÈ¥ËûµÄÉúÎïÊµÑéÊÒ"
+                        "¿´Ò»¿´°É£¬Ëµ²»¶¨ÄÜÕÒµ½Ëû±»¸ÐÈ¾µÄÏßË÷£¡"<<endl;
+                return;
+            }
+            else if(msg=="take bike")
+            {
+                Vehicle* v= new Vehicle("×ÔÐÐ³µ",20,0);
+                pl.take_vehicle(v);
+                return;
+            }
+            else if(msg=="take e-bike")
+            {   
+                Vehicle* v= new Vehicle("Ð¡¹ê",30,0);
+                pl.take_vehicle(v);
+                return;               
+            }
+            else if(msg=="goto bio lab")
+            {
+                pl.move_to(game_map.get_pos("bio lab"));
+                pl.get_off_vehicle();
+                cout<<"Äã¸úÐ¡ÓïÒ»ÆðÀ´µ½ÁËÉúÎïÊµÑéÊÒ"<<endl;
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´ËÀÈ¥µÄÉ¥Ê¬Çé¿ö\nsearch:¼ì²éÉ¥Ê¬\ntake bike:À´µ½Â¥ÏÂ£¬Æï×ÔÐÐ³µ\n"
+                    "take e-bike:À´µ½Â¥ÏÂ£¬ÆïÐ¡¹ê\ngoto bio lab: Ç°ÍùÉúÎïÊµÑéÊÒ(½¨ÒéÏÈ³Ë×ø½»Í¨¹¤¾ß)"<<endl;
+                return;
+            }
+        }
     }
-    else if(pl.get_pos()->get_name()=="biolab")//Scene 5: Biology laboratory
+    else if(pl.get_pos()->get_name()=="bio lab")//Scene 5: Biology laboratory
     {
-
+        if(pl.get_status()==BIO_INTO_BUILDING)
+        {
+            if(msg=="look")
+            {
+                cout<<"ÉúÎïÊµÑéÊÒÔÚ×Ï½ð¸Û¶«ÇøµÄÒ»¶°´óÂ¥Àï¡£Ð¡Óï×¢Òâµ½£¬ÔÚÃÅ¿Ú²¢Ã»ÓÐ¿´µ½¼¸Ö»É¥Ê¬£¬µ«ÊÇµØÉÏÈ´²¼ÂúÁËÃÜÃÜÂéÂéµÄÉ¥Ê¬µÄÑª½ÅÓ¡£¬ÉõÊÇÆæ¹Ö¡£"
+                        "ÄãÄÃ³öÉ¥Ê¬µÄÊÖ»ú£¬¶Ô±ÈÁÄÌì¼ÇÂ¼£¬Ã»´í£¬ËûµÄµ¼Ê¦¾ÍÊÇÈÃËûÀ´µÄÕâÀï¡£ÉúÎïÊµÑéÊÒµÄÃÅÐéÑÚ×Å..."<<endl;
+                return;
+            }
+            else if(msg=="go in")
+            {
+                cout<<"ÄãÍÆ¿ªÁËÉúÎïÊµÑéÊÒµÄÃÅ£¬ÑÛÇ°µÄ¾°Ïó¿´ÆðÀ´Ê®·ÖÕý³£..."<<endl;
+                pl.set_status(BIO_MEET);
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ²é¿´ÃÅ¿ÚÇé¿ö\ngo in: ½øÈëÉúÎïÊµÑéÊÒ"<<endl;
+                return;
+            }
+        }
+        else if(pl.get_status()==BIO_MEET)
+        {
+            if(msg=="look")
+            {
+                cout<<"ÑÛÇ°ÊÇÒ»Î»ÖÐÄê½ÌÊÚ£¬´©×Å¸É¾»£¬ÏÔÈ»Ã»ÓÐ±»É¥Ê¬¸ÐÈ¾¡£ÊµÑéÊÒµÄ×À×ÓÉÏ£¬°Ú·Å×ÅÐí¶à×°×ÅÆæ¹ÖÊÔ¼Á¹Ü×Ó£¬¸öÍ·²»Ð¡"
+                      "ÓÐºìÉ«µÄ£¬ÓÐÂÌÉ«µÄ£¬»¹²»Ð¡¡£Ð¡ÓïÎÊµÀ£ºÒª²»ÒªÎÊÒ»ÏÂËûÊ²Ã´Çé¿öÄØ£¿"<<endl;
+                return;
+            }
+            else if(msg=="ask")
+            {
+                cout<<"ÖÐÄêÄÐ×Ó½éÉÜËµ×Ô¼ºÐÕÒ¶£¬ÊÇÉúÎïÑ§ÔºµÄ½ÌÊÚ£¬×òÌì½ÐÑ§ÉúÀ´ÊµÑéÊÒ×öÉúÒâ£¬Ã»Ïëµ½À´µÄÊ±ºòÒÑ¾­±ä³ÉÁËÉ¥Ê¬£¬Ëû²»ÖªµÀÔõÃ´»ØÊÂ"
+                        "¸ÏÃ¦°ÑËûËøÔÚÁËÃÅÍâ£¬×Ô¼ºÒ²Ò»Ö±²»¸Ò³öÈ¥£¬Ò»Ö±¶ãÔÚÊµÑéÊÒÀïÑÐ·¢½âÒ©¡£ÄãÐÄÏë£º½âÒ©£¿¸Ã²»»áÊÇÕâÐ©»¨»¨ÂÌÂÌµÄ¹Ü×Ó°É£¿"
+                        "Ëû½Ó×ÅËµµÀ£ºÄãÃÇÓ¦¸ÃÒ²Ïë³öÈ¥°É£¿¿ÉÏ§ÏÖÔÚÑ§Ð£³ö¿Ú¶¼ÊÇÉ¥Ê¬°ÑÊØ£¬ÎÒ½¨ÒéÄãÃÇÈ¥¾É¹ÜÀíÑ§ÔºÂ¥£¬¾ÍÊÇÕã´óÆôÕæºþÅÔ±ß×î¸ßµÄÄÇ¸ö½¨Öþ"
+                        "£¬µÄÂ¥¶¥ÉÏÈ¥¿´Ò»¿´£¬ÄÇÀïÊÓÒ°ºÃ£¬¿ÉÒÔ¿´¿´ÓÐÃ»ÓÐ³öÂ·£¬»òÕßÏòÍâÃæÇó¾ÈÒ²ÊÇ±È½ÏÈÝÒ×·¢ÏÖµÄ¡£Ð¡ÓïºÜ¼¤¶¯£ºÈ·ÊµÊÇ¸öºÃÖ÷Òâ£¡"
+                        "ÄúÒ²¸úÎÒÃÇÒ»ÆðÈ¥°É¡£Ò¶½ÌÊÚÎÞÄÎµÄÐ¦ÁËÐ¦£¬Ëµ£ºËãÁË£¬ÀÏÁË¡£ÎÒÈ¥»á¸øÄãÃÇÌí¸ºµ££¬ÎÒ»¹ÊÇÑÐ·¢½âÒ©°É£¬Ëµ²»¶¨»¹ÄÜ½â¾È¸ÐÈ¾µÄÍ¬Ñ§¡£"
+                        "Å¶¶ÔÁË£¬ÄÇÀïÍ¦Ô¶µÄ£¬ÎÒµÄ³µÍ£ÔÚÂ¥ÏÂÁË£¬ÄãÃÇÒªÓÃ¿ÉÒÔ¿ª£¡ËµÍê¶ª¸øÁËÎÒÃÇÒ»´®³µÔ¿³×¡£"
+                        "Äã¿´ÁË¿´ÑÛÇ°µÄÒ¶½ÌÊÚ£¬¾õµÃËûËµµÄÈ·ÊµÓÐµÀÀí£¬µ«×Ü¸Ð¾õÄÄÀï¹Ö¹ÖµÄ¡£ËãÁË£¬»¹ÊÇÏÈÈ¥¿´¿´°É¡£"<<endl;
+                return;
+            }
+            else if(msg=="pick red tube")
+            {
+                pl.pick("red tube");
+                return;
+            }
+            else if(msg=="pick green tube")
+            {
+                pl.pick("green tube");
+                return;
+            }
+            else if(msg=="leave")
+            {
+                pl.set_status(BIO_LEAVE);
+                cout<<"ÄãºÍÐ¡ÓïÀë¿ªÁËÊµÑéÊÒ£¬»Øµ½ÉúÎï´óÂ¥Â¥ÏÂ¡£"<<endl;
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ¼ì²éÊµÑéÊÒÇé¿ö\nask: Ñ¯ÎÊ½ÌÊÚÇé¿ö\npick red tube: ÍµÍµ´§×ßºìÉ«ÊÔ¹Ü\npick green tube: ÍµÍµ´§×ßÂÌÉ«ÊÔ¹Ü\n"
+                        "leave: Àë¿ªÊµÑéÊÒ"<<endl;
+                return;
+            }
+        }
+        else if(pl.get_status()==BIO_LEAVE)
+        {
+            if(msg=="look")
+            {
+                cout<<"Â¥ÏÂ£¬ÁãÉ¢µØÍ£×Å×ÔÐÐ³µºÍÐ¡¹ê£¬»¹ÓÐÅÔ±ßÒ¶½ÌÊÚµÄË½¼Ò³µ¡£×ßÈ¥¹ÜÔºÌ«ÏûºÄÌåÁ¦£¬¿ÉÊÇÄãÒ²²»Ì«ÐÅÈÎÒ¶½ÌÊÚ¡£"<<endl;
+                return;
+            }
+            else if(msg=="take e-bike")
+            {
+                cout<<"Ð¡¹êÃ»µçÁË£¡"<<endl;
+                return;
+            }
+            else if(msg=="take bike")
+            {
+                Vehicle* v= new Vehicle("×ÔÐÐ³µ",20,0);
+                pl.take_vehicle(v);
+                return;
+            }
+            else if(msg=="take car")
+            {
+                Vehicle*v =new Vehicle("Ë½¼Ò³µ",50,0);
+                pl.take_vehicle(v);
+                return;
+            }
+            else if(msg=="get off")
+            {
+                pl.get_off_vehicle();
+                return;
+            }
+            else if(msg=="goto roof")
+            {
+                pl.move_to(game_map.get_pos("roof"));
+                pl.get_off_vehicle();
+                cout<<"ÄãºÍÐ¡ÓïÀ´µ½ÁË¹ÜÔº£¬ËÆºõÃ»Ê²Ã´É¥Ê¬£¬×øµçÌÝÀ´µ½ÁËÂ¥¶¥"<<endl;
+                return;
+            }
+            else if(msg=="hint")
+            {
+                cout<<"look: ¼ì²éÂ·±ßÇé¿ö\ntake bike: ÆïÉÏ×ÔÐÐ³µ(ºÃÏñÀëÄ¿µÄµØÓÐµãÔ¶)\ntake e-bike: ÆïÐ¡¹ê\n"
+                        "take car: ¿ªÒ¶½ÌÊÚµÄË½¼Ò³µ\nget off: Àë¿ª½»Í¨¹¤¾ß\ngoto roof: Ç°Íù¾É¹ÜÔºÂ¥¶¥"<<endl;
+                return;
+            }
+        }
     }
     else if(pl.get_pos()->get_name()=="roof")//Scene 6: The roof of the old 
     {
