@@ -13,21 +13,17 @@ class Game
 private:
     Player pl;
     GameMap game_map;
-    GAME_STAGE stage;//О©╫О©╫о╥О©╫в╤О©╫
-    string input_box;//О©╫О©╫г╟О©╫О©╫О©╫ж╩О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫д╠О©╫О©╫О©╫н╢О©╫А╫╩О©╫О©╫
-    string msg;//О©╫О©╫р╦О©╫О©╫А╫╩О©╫О©╫О©╫д╠О©╫
+    GAME_STAGE stage;//сно╥в╢л╛
+    string input_box;//йДхК©РйДхК╣ддзхщё╗н╢лА╫╩ё╘
+    string msg;//рялА╫╩╣дйДхКдзхщ
     
 public:
-    void Init();//О©╫О©╫й╪О©╫О©╫
+    void Init();//ЁУй╪╩╞
 
-    void read();//О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫д╠О©╫,О©╫О©╫О©╫О©╫О©╫О©╫иёО©╫О©╫ьЁО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫submit
-    void submit();//О©╫с╤т╩О©╫О©╫О©╫О©╫х║О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫д╠О©╫О©╫О©╫input_box->msg, clear input_box, call processО©╫О©╫
-    void process(string msg);//О©╫О©╫О©╫О©╫stageО©╫О©╫О©╫О©╫О©╫О©╫msgО©╫д╠О©╫,О©╫О©╫ь╪О©╫О©╫д╡О©╫О©╫О©╫
+    void read();//╤ах║р╩лУпео╒ё╛╩ьЁ╣╫╚╩ьsubmit
+    void submit();//лА╫╩йДхКпео╒ё╨input_box->msg, гЕ©уinput_box, ╣Всцprocess╨╞йЩ
+    void process(string msg);//╦Ы╬щсно╥║╒мФ╪рв╢л╛рт╪╟йДхКпео╒ё╛вЖЁЖпео╒╥╢ю║ё╗сно╥вНжьр╙╣дбъ╪╜╡©╥жё╘
  
-    bool is_end() const;//О©╫О©╫О©╫О©╫О©╫г╥О©╫О©╫О©╫О©╫О©╫О©╫stageО©╫г╥О©╫н╙ENDО©╫О©╫
-    void quit();//О©╫кЁО©╫О©╫О©╫о╥
-
-private:
-    void show_prompt(string prompt) const;//О©╫О©╫О©╫О©╫О©╫О©╫й╬О©╫О©╫о╒
-
+    bool is_end() const;//еп╤осно╥йг╥Яря╬╜╣╫ак╫А╬ж
+    void quit();//мкЁЖсно╥
 };

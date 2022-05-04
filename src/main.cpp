@@ -18,5 +18,6 @@ int main()
 		g.read();
 	}
 	g.quit();
+	system("pause");
 	return 0;
 }

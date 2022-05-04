@@ -15,12 +15,12 @@ Food::Food(const string setname)
     }
     else if (setname == "red tube")
     {
-        effect = 30 ;
+        effect = 0 ;
         occupancy = 8 ;
     }
         else if (setname == "green tube")
     {
-        effect = -30 ;
+        effect = -100 ;
         occupancy = 8 ;
     }
 }
