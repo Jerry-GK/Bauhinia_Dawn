@@ -48,7 +48,10 @@ public:
     int getMAXHP() const;
     int getcurrentHP () const;  
     int getspeed () const ;
-    int getmove_capability() const ;
+    int get_move_capability() const ;
+    Vehicle* get_vehicle() const;
+    Weapon* get_weapon() const;
+
     void recoverHP(const int recovery); //恢复生命值
     void gainEXP(const int EXP);//获得经验值
     void levelUP(const int currentlevel);//升级 

@@ -21,8 +21,13 @@ Weapon::Weapon(const string setname)
     }
     else if (setname == "umbrella")
     {
-        attack = 3 ;
-        occupancy = 8 ;
+        attack = 4 ;
+        occupancy = 10 ;
+    }
+    else if(setname == "gun")
+    {
+        attack=20;
+        occupancy=8;
     }
 }
 string Weapon::getname() const
@@ -39,7 +44,7 @@ int Weapon::getoccupancy() const
 }
 bool isWeapon(string item)
 {
-    string Weapon = "fork#knife#umbrella" ;
+    string Weapon = "fork#knife#umbrella#gun" ;
     return (Weapon.find(item) < Weapon.length() );
 }
 

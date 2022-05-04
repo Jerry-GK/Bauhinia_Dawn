@@ -10,6 +10,7 @@ Vehicle::Vehicle(const string setname ,const int setspeed , const int setmove_ca
 Vehicle::Vehicle(const string setname)
 {
     name = setname ;
+    move_capability=0;
     if (setname == "car")
     {
         speed = 15 ;
@@ -22,7 +23,7 @@ Vehicle::Vehicle(const string setname)
     {
         speed = 7 ;
     }
-    else if (setname == "ship")
+    else if (setname == "boat")
     {
         speed = 3 ;
         move_capability = 1; 
@@ -42,6 +43,6 @@ int Vehicle::getmove_capability() const
 }
 bool isVehicle(string item)
 {
-    string Vehicle = "ship#bike#car#" ;
+    string Vehicle = "boat#bike#car#e-bike" ;
     return (Vehicle.find(item) < Vehicle.length() );
 }

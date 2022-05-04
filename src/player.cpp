@@ -40,9 +40,19 @@ int Player::getspeed () const
     return speed ;
 }
 
-int Player::getmove_capability() const
+int Player::get_move_capability() const
 {
     return move_capability ;
+}
+
+Vehicle* Player::get_vehicle() const
+{
+    return cur_veh;    
+}
+
+Weapon* Player::get_weapon() const
+{
+    return cur_wep;
 }
 
 void Player::equipWeapon(Weapon* a ) //装备武器
@@ -264,7 +274,13 @@ void Player::drop(string item)
 //--------------------------------------to be implemented------------------------------------------------
 void Player::move_to(Position* p)
 {
+    if(p==NULL)
+    {
+        cout<<"不存在该地点！"<<endl;
+        return;
+    }
     this->set_pos(p);
+    cout<<"来到："<<p->get_name()<<endl;
     //根据当前pos与目标p的距离(根据xy坐标)，以及速度，计算体力变化的逻辑
 }
 

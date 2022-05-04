@@ -13,6 +13,16 @@ Food::Food(const string setname)
         effect = 2 ;
         occupancy = 1 ;
     }
+    else if (setname == "red tube")
+    {
+        effect = -30 ;
+        occupancy = 8 ;
+    }
+        else if (setname == "green tube")
+    {
+        effect = 30 ;
+        occupancy = 8 ;
+    }
 }
 string Food::getname() const
 {
@@ -28,7 +38,7 @@ int Food::getoccupancy() const
 }
 bool isFood(string item)
 {
-    string Food = "bread#apple#" ;
+    string Food = "bread#apple#red tube#green tube" ;
     return (Food.find(item) < Food.length() );
 }
 

@@ -7,6 +7,10 @@ void GameMap::add_pos(Position p)
 
 Position* GameMap::get_pos(string name)
 {
+    if(vpos.find(name)==vpos.end())
+    {
+        return NULL;
+    }
     return &(vpos.find(name)->second);
 }
 

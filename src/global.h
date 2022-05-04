@@ -5,17 +5,28 @@ using namespace std;
 
 static const string info_help=
 "主要游戏指令帮助：\n\
-look: 查看周边情况\n\
+-------------条件指令（需要在特定场景、按提示使用）-------------\n\
+begin: 进入游戏\n\
 goto <地点英文名>: 前往某个地方\n\
+pick <物品名>: 拾取身边的某种物品\n\
+take <交通工具英文名>: 乘坐身边的交通工具\n\
+-------------通用指令（绝大多数情况皆可使用）-------------\n\
+look: 查看周边情况\n\
 check: 查看自身属性状态(通用)\n\
 map: 查看地图(通用)\n\
 bag: 查看当前背包内容(通用)\n\
 use <物品英文名>: 使用背包中的物品(通用)\n\
 drop <物品英文名>: 丢弃背包中的物品(通用)\n\
+get off <交通工具英文名>: 离开当前的交通工具\n\
 hint: 给出当前正确操作提示(通用)\n\
-quit: 退出游戏(通用)";
+quit: 退出游戏(通用)\n\
+-------------超级指令（仅供测试使用）-------------\n\
+sudo goto <地点英文名>: 强制跳转至某个地点场景\n\
+sudo pick <物品英文名>: 强制拾取物品\n\
+sudo take <交通工具英文名>: 强制乘坐交通工具\n\
+";
 
-static const string info_invalid="输入的指令无效！(可输入-help查看通用合法指令)";
+static const string info_invalid="输入的指令无效！(可输入help查看一般合法指令, 输入hint查看当前操作提示)";
 static const string info_welcome="欢迎来到《紫荆黎明》! (输入begin开始游戏)";
 static const string info_bye="谢谢体验！";
 static const string info_wake_up="你是小泽，是浙大计算机系的一名普通大二学生，住在碧峰。昨晚是周六，室友都出去玩了，只留下你在宿舍。早上九点，你像\
@@ -67,8 +78,19 @@ enum PLAYER_STAGE
     //bio lab
     BIO_INTO_BUILDING,
     BIO_MEET,
-    BIO_LEAVE
+    BIO_LEAVE,
     //roof
+    ROOF_HALL,
+    ROOF_TOP,
+    ROOF_LEAVE,
+    //wharf
+    WHARF_DECIDE,
+    //lake
+    LAKE_ROW,
+    LAKE_FIGHT,
+    LAKE_SAVE,
+    //exit
+    EXIT_END
 };
 
 
