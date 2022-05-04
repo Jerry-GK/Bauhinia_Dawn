@@ -1,5 +1,5 @@
 #include "weapon.h"
-
+#include "global.h"
 
 Weapon::Weapon(const string setname ,const int setattack)
 {
@@ -44,7 +44,6 @@ int Weapon::getoccupancy() const
 }
 bool isWeapon(string item)
 {
-    string Weapon = "fork#knife#umbrella#gun" ;
-    return (Weapon.find(item) < Weapon.length() );
+    return global_set_weapons.find(item)!=global_set_weapons.end();
 }
 

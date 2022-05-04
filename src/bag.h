@@ -3,14 +3,21 @@
 #include <map>
 #include <string>
 #include "global.h"
+
 using namespace std;
 
+struct info
+{
+    int size ; //占用大小
+    int num = 0; //数量
+};
+typedef info* Info ;
 class Bag
 {
 protected:
     int maxcapacity;
     int curcapacity = 0 ;
-    map <string,int> bag ; //<名字，占用大小>
+    map <string,Info> bag ; //<名字，占用大小>
 public:
     Bag();
     void show();

@@ -1,5 +1,5 @@
 #include "vehicle.h"
-
+#include "global.h"
 
 Vehicle::Vehicle(const string setname ,const int setspeed , const int setmove_capability)
 {
@@ -43,6 +43,5 @@ int Vehicle::getmove_capability() const
 }
 bool isVehicle(string item)
 {
-    string Vehicle = "boat#bike#car#e-bike" ;
-    return (Vehicle.find(item) < Vehicle.length() );
+    return global_set_vehicles.find(item)!=global_set_vehicles.end();
 }

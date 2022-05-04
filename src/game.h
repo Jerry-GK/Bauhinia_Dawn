@@ -16,7 +16,7 @@ private:
     GAME_STAGE stage;//��Ϸ�׶�
     string input_box;//��ǰ���ֻ��������ı���δ�ύ��
     string msg;//��Ҹ��ύ���ı�
-
+    
 public:
     void Init();//��ʼ��
 

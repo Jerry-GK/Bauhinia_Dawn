@@ -1,16 +1,16 @@
 #pragma once
 #include <string>
-
+#include <set>
 using namespace std;
 
 static const string info_help=
 "主要游戏指令帮助：\n\
--------------条件指令（需要在特定场景、按提示使用）-------------\n\
+-------------条件指令（需要在特定场景、按提示使用）-------------\n\n\
 begin: 进入游戏\n\
 goto <地点英文名>: 前往某个地方\n\
 pick <物品名>: 拾取身边的某种物品\n\
 take <交通工具英文名>: 乘坐身边的交通工具\n\
--------------通用指令（绝大多数情况皆可使用）-------------\n\
+-------------通用指令（绝大多数情况皆可使用）-------------\n\n\
 look: 查看周边情况\n\
 check: 查看自身属性状态(通用)\n\
 map: 查看地图(通用)\n\
@@ -20,14 +20,14 @@ drop <物品英文名>: 丢弃背包中的物品(通用)\n\
 get off <交通工具英文名>: 离开当前的交通工具\n\
 hint: 给出当前正确操作提示(通用)\n\
 quit: 退出游戏(通用)\n\
--------------超级指令（仅供测试使用）-------------\n\
+-------------超级指令（仅供测试使用）-------------\n\n\
 sudo goto <地点英文名>: 强制跳转至某个地点场景\n\
 sudo pick <物品英文名>: 强制拾取物品\n\
 sudo take <交通工具英文名>: 强制乘坐交通工具\n\
 ";
 
+static const string info_welcome="欢迎来到《紫荆黎明》! (输入begin开始游戏，游戏过程中建议输入help查看指令说明，可输入hint查看提示)";
 static const string info_invalid="输入的指令无效！(可输入help查看一般合法指令, 输入hint查看当前操作提示)";
-static const string info_welcome="欢迎来到《紫荆黎明》! (输入begin开始游戏)";
 static const string info_bye="谢谢体验！";
 static const string info_wake_up="你是小泽，是浙大计算机系的一名普通大二学生，住在碧峰。昨晚是周六，室友都出去玩了，只留下你在宿舍。早上九点，你像\
 往常一样模模糊糊地醒来，肚子很饿。窗外很暗，似乎又是沆州特有的阴天，你简单完成了洗漱，正准备去教学楼自习，突然听到教学楼外面\
@@ -51,17 +51,18 @@ static const string info_goto_west="你来到了西教，眼前的景象让你大吃一惊......";
 
 enum GAME_STAGE//游戏当前状态的枚举类型
 {
-    BEGIN,
-    DIE,
-    PASS,
-    END
+    PLAYING,//正常游戏状态
+    PARTNER_DIE,//伙伴已经死去
+    DIE,//结局：死去
+    ALONE_SUC,//结局：一人独自成功逃生
+    SUC,//结局：成功带伙伴一起逃生
+    QUIT//结局：非正常退出
 };
 
 enum PLAYER_STAGE
 {
     UNKNOWN,
     //dormitory
-    DOR_WAKE_UP,
     DOR_TO_LOOK_OUTSIDE,
     DOR_TO_CHOOSE,
     //market
@@ -89,15 +90,21 @@ enum PLAYER_STAGE
     LAKE_ROW,
     LAKE_FIGHT,
     LAKE_SAVE,
-    //exit
-    EXIT_END
+    LAKE_SUC,
+    //south gate
+    SOUTH_END
 };
 
 
 //角色：
-const int initial_speed = 1 ; // 初始移动速度
-const int initial_move_capability = 0 ;// 初始移动能力
-const int initial_currentHP = 20 ;// 初始当前体力
-const int initial_MAXHP = 40 ;// 初始最大体力
-const int initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
-const int initial_Bag_occupancy = 999999;
+static const int global_initial_speed = 1 ; // 初始移动速度
+static const int global_initial_move_capability = 0 ;// 初始移动能力
+static const int global_initial_currentHP = 20 ;// 初始当前体力
+static const int initial_MAXHP = 40 ;// 初始最大体力
+static const int global_initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
+static const int global_initial_Bag_occupancy = 999999;
+
+//物件字符串集合
+static set<string> global_set_weapons={"fork","umbrella","knife","gun"};
+static set<string> global_set_vehicles={"bike","e-bike","car","boat"};
+static set<string> global_set_foods={"bread","apple","red tube","green tube"};

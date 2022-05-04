@@ -5,14 +5,14 @@ Player::Player()
     name = "小泽" ;
     level = 1;
     currentEXP = 0 ;
-    aggress =  initial_currentHP;
-    currentHP = initial_currentHP;
+    aggress =  global_initial_currentHP;
+    currentHP = global_initial_currentHP;
     MAXHP = initial_MAXHP;
-    speed = initial_speed ;
-    move_capability = initial_move_capability ;
+    speed = global_initial_speed ;
+    move_capability = global_initial_move_capability ;
     for (int i = 0 ; i < 9 ; i++)
     {
-        needEXP[i] = initial_EXP[i] ;
+        needEXP[i] = global_initial_EXP[i] ;
     }
     cur_veh = NULL ;
     cur_wep=NULL;
@@ -93,8 +93,8 @@ void Player::get_off_vehicle()//下车 ，速度、移动能力 恢复成 $初始值$
         cout<<"你现在没有乘坐交通工具！"<<endl;
         return;
     }
-    speed = initial_speed ;
-    move_capability = initial_move_capability;
+    speed = global_initial_speed ;
+    move_capability = global_initial_move_capability;
     cout<<"离开"<<cur_veh->getname()<<endl;
     delete cur_veh;
     cur_veh=NULL;
@@ -208,6 +208,10 @@ void Player::pick(string item)
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity()- mybag.getcurcapacity() ;
         }
     }
+    else
+    {
+        cout<<"无效指令：不存在该类物品！"<<endl;
+    }
 }
 
 void Player::use(string item)
@@ -234,7 +238,6 @@ void Player::use(string item)
             disequipWeapon();
             Weapon* p =  new Weapon (item) ;
             equipWeapon(p);
-            cout<<"装备了武器："<<cur_wep->getname()<<endl;
         }
         else 
         {
@@ -257,18 +260,23 @@ void Player::drop(string item)
         }
         else if (isWeapon(item))
         {
-            if (item == cur_wep->getname())
+            if (cur_wep!=NULL && item == cur_wep->getname())
             {
                 disequipWeapon();
             }
             mybag.det(item);
         }
-        cout << "丢弃了 " << item << " ，当前背包容量：" << mybag.getcurcapacity() << endl;
+        cout << "丢弃/赠予了 " << item << " ，当前背包剩余容量：" <<mybag.getmaxcapacity() - mybag.getcurcapacity() << endl;
     }
     else
     {
-        cout << "丢弃失败！背包内不存在这个物品" << endl;
+        cout << "丢弃/赠予失败！背包内不存在这个物品" << endl;
     }
+}
+
+bool Player::have(string item)
+{
+    return mybag.find(item);
 }
 
 //--------------------------------------to be implemented------------------------------------------------

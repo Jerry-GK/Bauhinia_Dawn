@@ -69,6 +69,8 @@ public:
 
     void drop(string item);//丢弃背包中的某种物品
 
+    bool have(string item);//判断自己是否背包里有某种物品
+
     void equipWeapon(Weapon* a ); //装备武器 ，人物的武器攻击力值 = 武器攻击力
 
     void disequipWeapon () ; //卸下当前武器 ， 人物的武器攻击力值 = 0 ；
