@@ -76,9 +76,11 @@ public:
     void disequipWeapon () ; //卸下当前武器 ， 人物的武器攻击力值 = 0 ；
     
     //fight
-    void fight(Zombie *z);
+    int fight(Zombie *z); //打赢了返回2 逃跑返回1 被击败返回0
 
     void attack(Weapon* w, Zombie* z);//用某种武器攻击丧尸
+
+    void getdamage(const int damage);//被攻击
 
     //vehicle
     Vehicle* get_veh();

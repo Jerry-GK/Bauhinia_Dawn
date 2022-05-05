@@ -6,13 +6,13 @@ void Game::Init()
     this->stage=PLAYING;
     //init positions in game map
     Position p;
-    p.set("dorm",0,0);//ËÞÉá
+    p.set("dormitory",0,0);//ËÞÉá
     p.add_status(DOR_TO_LOOK_OUTSIDE);
     //
     game_map.add_pos(p);
     
-    p.set("Market",0,0);//³¬ÊÐ
-    p.add_status(MARKET_SEARCH);
+    p.set("shop",0,0);//³¬ÊÐ
+    p.add_status(SHOP_SEARCH);
     //
     game_map.add_pos(p);
 
@@ -82,7 +82,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         if(msg=="begin")
         {
             show_info(info_wake_up);    
-            pl.move_to(game_map.get_pos("dorm"));
+            pl.move_to(game_map.get_pos("dormitory"));
             return;
         }
         else
@@ -144,7 +144,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         return;
     }
     //·ÇÈÎºÎ³¡¾°Ö®ÏÂ¶¼¿ÉÖ´ÐÐµÄÖ¸Áî
-    else if(pl.get_pos()->get_name()=="dorm")//Scene 1: Dormitory
+    else if(pl.get_pos()->get_name()=="dormitory")//Scene 1: Dormitory
     {
         if(pl.get_status()==DOR_TO_LOOK_OUTSIDE)
         {
@@ -177,26 +177,26 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 pl.pick("umbrella");
                 return;
             }
-            else if(msg=="goto market")
+            else if(msg=="goto shop")
             {
-                pl.move_to(game_map.get_pos("Market"));
-                show_info(info_to_market);
+                pl.move_to(game_map.get_pos("shop"));
+                show_info(info_to_shop);
                 return;
             }
             else if(msg=="hint")
             {
-                cout<<"look:¹Û²ìËÞÉá\npick forkÊ°È¡ÒÂ²æ\npick umbrellaÊ°È¡ÓêÉ¡\ngoto marketÇ°Íù½ÌÓý³¬ÊÐ"<<endl;
+                cout<<"look:¹Û²ìËÞÉá\npick forkÊ°È¡ÒÂ²æ\npick umbrellaÊ°È¡ÓêÉ¡\ngoto shopÇ°Íù½ÌÓý³¬ÊÐ"<<endl;
                 return;
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="Market")//Scene 2: Market
+    else if(pl.get_pos()->get_name()=="shop")//Scene 2: shop
     {
-        if(pl.get_status()==MARKET_SEARCH)
+        if(pl.get_status()==SHOP_SEARCH)
         {
             if(msg=="look")
             {
-                show_info(info_look_market);
+                show_info(info_look_shop);
                 return;
             }
             else if(msg=="pick bread")
@@ -214,7 +214,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 show_info(info_saleman);
                 return;
             }
-            else if(msg=="goto gate")
+            else if(msg=="goto dor gate")
             {
                 pl.move_to(game_map.get_pos("dor gate"));
                 show_info(info_to_gate);
@@ -224,7 +224,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             {
                 cout<<"look:²é¿´³¬ÊÐÇé¿ö\npick bread:Ê°È¡Ãæ°ü\nask:Ñ¯ÎÊÊÕ»ñÔ±Çé¿ö\n"
                 "use bread:¿ÉÒÔ³ÔµôÒ»¸öÊ°È¡µÄÃæ°ü²¹³äÌåÁ¦\n"
-                "pick knife: ¹ºÂòÒ»°ÑÐ¡µ¶\ngoto gate:¿ÉÒÔÈ¥Ñ§Ô°ÃÅ¿Ú£¨½¨Òé³ÔÍêÃæ°ü¡¢Ñ¯ÎÊºóÔÙÈ¥£©"<<endl;
+                "pick knife: ¹ºÂòÒ»°ÑÐ¡µ¶\ngoto dor gate:¿ÉÒÔÈ¥Ñ§Ô°ÃÅ¿Ú£¨½¨Òé³ÔÍêÃæ°ü¡¢Ñ¯ÎÊºóÔÙÈ¥£©"<<endl;
                 return;
             }
         }
@@ -232,7 +232,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
     else if(pl.get_pos()->get_name()=="dor gate")//Scene 3: Gate of the dormitory, beside the road
     {
         Zombie* z;
-        z=new Zombie;
+        z=new Zombie("water");
         if(pl.get_status()==GATE_FIGHT)
         {
             if(msg=="look")
@@ -242,7 +242,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="escape")
             {
-                pl.move_to(game_map.get_pos("Market"));
+                pl.move_to(game_map.get_pos("shop"));
                 cout<<"ÄãÀÇ±·µØÌÓ»ØÁË½ÌÓý³¬ÊÐ,»¹ºÃÉ¥Ê¬Ã»ÓÐ×·¹ýÀ´¡£¿´À´»¹ÊÇµÃ×¼±¸µãÎï×Ê²ÅÄÜÓëÉ¥Ê¬ÔÙÕ½¡£"<<endl;
                 delete z;
                 return;
@@ -250,10 +250,21 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             else if(msg=="fight")
             {
                 //Õ½¶·Âß¼­
-                pl.fight(z);
-                pl.set_status(GATE_AFTER_FIGHT);
-                show_info(info_fight_suc);
-                delete z;
+                switch(pl.fight(z))
+                {
+                    case 0:
+                        this->stage=DIE;
+                        break;
+                    case 1: 
+                        pl.move_to(game_map.get_pos("shop"));
+                        cout<<"ÄãÀÇ±·µØÌÓ»ØÁË½ÌÓý³¬ÊÐ,»¹ºÃÉ¥Ê¬Ã»ÓÐ×·¹ýÀ´¡£¿´À´»¹ÊÇµÃ×¼±¸µãÎï×Ê²ÅÄÜÓëÉ¥Ê¬ÔÙÕ½¡£"<<endl;
+                        delete z;
+                        break;
+                    case 2:
+                        pl.set_status(GATE_AFTER_FIGHT);
+                        show_info(info_fight_suc);
+                        delete z;
+                }
                 return;
             }
             else if(msg=="hint")
@@ -359,7 +370,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         }
         else if(pl.get_status()==WEST_FIGHT)
         {
-            Zombie* z=new Roll_Zombie();
+            Zombie* z=new Zombie("roll");
             if(msg=="look")
             {
                 cout<<"Ò»Ö»É¥Ê¬ÊÖÀïÄÃ×ÅÒ»±¾Êé£¬ÏëÄã³å¹ýÀ´¡£ÔãÁË£¬ÊÇ¾íÍõÉ¥Ê¬£¡"<<endl;
@@ -697,7 +708,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="fight")
             {
-                Zombie* z=new Water_Zombie;
+                Zombie* z=new Zombie("water");
                 pl.fight(z);
                 //Èç¹û³É¹¦´ò°ÜË®É¥Ê¬
                 cout<<"¾­¹ýÒ»·¬¼¤Õ½£¬ÄãÃÇÖÕÓÚÒ»Æð»÷°ÜÁËË®É¥Ê¬£¬¿ÉÊÇÅÔ±ßµÄÐ¡ÓïÈ´Îæ×Å¸ì²²£¬ÓÐÐ©²»¶Ô¾¢..."<<endl;

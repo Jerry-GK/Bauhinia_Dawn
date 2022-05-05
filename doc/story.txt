@@ -21,3 +21,36 @@
 交通工具：自行车，龟，汽车，皮划艇。
 丧尸：普通丧尸，卷王丧尸，安保丧尸，水丧尸...
 玩家
+
+
+方式一：
+父类：
+virtual attack()
+normal_attack()
+
+子类：
+special_attack()
+attack()//重写
+{
+    if(rand...)
+        normal_attack()
+    else
+        special_attack()
+}
+
+fight:
+z->attack();
+
+方式二：
+父类：
+attack()//普通攻击
+
+子类：
+special_attack()
+
+fight:
+if(rand..)
+    z->attack()
+else
+    z->special_attack()
+

@@ -292,7 +292,77 @@ void Player::move_to(Position* p)
     //根据当前pos与目标p的距离(根据xy坐标)，以及速度，计算体力变化的逻辑
 }
 
-void Player::fight(Zombie *z)
+int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
 {
-    //与丧尸的战斗逻辑
+    int round = 1 ;
+    string msg = "" ;
+    cout << "\n开始战斗 , 你要击败的是： " << z->getname() << endl; 
+    z->show();
+    cout << "你当前状态：" << endl; 
+    cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress << "/" << weaponaggress << endl;
+    while (1)
+    {
+        cout << "\nRound" << round << endl << "你的选择操作是(fighting状态只能按提示操作):" << endl 
+             <<  "hit: 攻击丧尸\nuse <武器名>: 更换武器/使用食物(也会被攻击！)\nescape: 逃跑"  << endl << "\n<fighting> Please Enter: " ;
+        getline(cin,msg);
+        if (msg == "escape")
+        {
+            cout << "\n你感觉有些不对劲 , 你逃跑了！留得青山在,不怕没柴烧" << endl;
+            return 1 ;
+        }
+        else if((msg.find("use")==0)&&msg.length()>=5)
+        {
+            this->use(msg.substr(4,msg.length()-4));
+            msg.clear();
+        }
+        else if (msg == "hit")
+        {
+            attack(cur_wep,z) ;
+            if (! z->getHP()) //打败了僵尸
+            {
+                cout << "\n你克服困难,终于击败了丧尸！" << endl;
+                this->gainEXP(z->getEXP());
+                return 2;
+            }
+        }
+        else
+        {
+            cout << endl << "指令无效, 请按提示操作！" << endl;
+            msg.clear();
+            continue;
+        }
+
+        z->attack(this);
+        if ( !getcurrentHP() )//被僵尸打败
+        {
+            cout << "\n很遗憾,你棋差一招，被丧尸击败了" << endl;
+            return 0 ;
+        }
+        round++;
+    }
+}
+
+void Player::getdamage(const int damage)//被攻击
+{
+    currentHP -= damage ;
+    if (currentHP < 0)
+    {
+        currentHP = 0 ;
+    }
+    cout << "你受到了 " << damage << "点伤害 , 当前体力为： " << currentHP << endl; 
+}
+
+void Player::attack(Weapon *a,Zombie *z)
+{
+    cout  << "你发动了攻击！" << endl;
+    //rand(20) + aggress > def can dealt damage to zombie by your weapon + 1;
+    if ( rand()*20 + aggress > z->getdef())
+    {
+        z->getdamage (weaponaggress + 1) ;
+    }
+    else 
+    {
+        cout << "你未能击穿丧尸的护甲 , 不要放弃尝试！" << endl;
+    }
+
 }
