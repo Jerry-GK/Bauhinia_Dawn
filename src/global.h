@@ -99,8 +99,9 @@ enum PLAYER_STAGE
 //角色：
 static const int global_initial_speed = 1 ; // 初始移动速度
 static const int global_initial_move_capability = 0 ;// 初始移动能力
-static const int global_initial_currentHP = 20 ;// 初始当前体力
-static const int initial_MAXHP = 40 ;// 初始最大体力
+static const int global_initial_agress = 20;
+static const int global_initial_currentHP = 80 ;// 初始当前体力
+static const int initial_MAXHP = 100 ;// 初始最大体力
 static const int global_initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
 static const int global_initial_Bag_occupancy = 999999;
 

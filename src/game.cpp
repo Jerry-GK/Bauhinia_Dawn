@@ -232,7 +232,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
     else if(pl.get_pos()->get_name()=="dor gate")//Scene 3: Gate of the dormitory, beside the road
     {
         Zombie* z;
-        z=new Zombie("water");
+        z=new Zombie;
         if(pl.get_status()==GATE_FIGHT)
         {
             if(msg=="look")
@@ -349,6 +349,11 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="give bread")
             {
+                if(!pl.have("bread"))
+                {
+                    cout<<"ÄãÃ»ÓÐÃæ°ü£¡"<<endl;
+                    return;
+                }
                 cout<<"Äã°ÑÃæ°üµÝ¸øÁËËý£¬¸æËßËýÄã½ÐÐ¡Ôó¡£ËýÁ¬Ã¦µÀÐ»£¬Ëµµ½£ºÎÒ½ÐÐ¡Óï£¬»¹ºÃÓÐÐÒ´æÕß£¬ÒªÊÇÖ»Ê£ÎÒÒ»¸öÈËÎÒÕæ²»ÖªµÀ¸ÃÔõÃ´°ì¡£"
                         "²»¹ýÎÒÃÇ×ÜÔÚ½ÌÊÒµÈ×ÅÒ²²»ÊÇ°ì·¨£¬µÃÏë°ì·¨ÕÒÏßË÷ÌÓ³öÈ¥°¡£¡ÄãÌ¾ÁËÌ¾Æø£¬Ëµ£ºÃ»°ì·¨£¬Ñ§Ð£µÄËùÓÐ"
                         "³ö¿ÚµÄ±£°²¶¼ÒÑ¾­±»É¥Ê¬¸ÐÈ¾ÁË£¬ÃÅ¿Ú¾Û¼¯ÁË´óÁ¿Ã»ÓÐÀ¶ÂëµÄÉ¥Ê¬£¬ÎÒÃÇ³ö²»È¥µÄ¡£"
@@ -370,7 +375,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         }
         else if(pl.get_status()==WEST_FIGHT)
         {
-            Zombie* z=new Zombie("roll");
+            Zombie* z=new Roll_Zombie;
             if(msg=="look")
             {
                 cout<<"Ò»Ö»É¥Ê¬ÊÖÀïÄÃ×ÅÒ»±¾Êé£¬ÏëÄã³å¹ýÀ´¡£ÔãÁË£¬ÊÇ¾íÍõÉ¥Ê¬£¡"<<endl;
@@ -378,9 +383,21 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="fight")
             {   
-                pl.fight(z);
-                pl.set_status(WEST_CHECK);
-                cout<<"·Ñ¾¢ÁË¾ÅÅ£¶þ»¢Ö®Á¦×ÜËã»÷°ÜÁË¾íÍõÉ¥Ê¬£¬¾íÍõÕæ¿ÉÅÂ¡£¿´×Åµ¹ÔÚÑÛÇ°µÄÉ¥Ê¬£¬ÄãºÍÐ¡ÓïÏÝÈë³ÁË¼"<<endl;
+                switch(pl.fight(z))
+                {
+                    case 0:
+                        this->stage=DIE;
+                        break;
+                    case 1: 
+                        pl.set_status(WEST_MEET);
+                        cout<<"Äã°ÑÃÅÒ»¹Ø£¬ÌÓ»ØÁË½ÌÊÒÀïÃæ"<<endl;
+                        delete z;
+                        break;
+                    case 2:
+                        pl.set_status(WEST_CHECK);
+                        cout<<"·Ñ¾¢ÁË¾ÅÅ£¶þ»¢Ö®Á¦×ÜËã»÷°ÜÁË¾íÍõÉ¥Ê¬£¬¾íÍõÕæ¿ÉÅÂ¡£¿´×Åµ¹ÔÚÑÛÇ°µÄÉ¥Ê¬£¬ÄãºÍÐ¡ÓïÏÝÈë³ÁË¼"<<endl;
+                        delete z;
+                }
                 return;
             }
             else if(msg=="escape")
@@ -708,11 +725,23 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
             else if(msg=="fight")
             {
-                Zombie* z=new Zombie("water");
-                pl.fight(z);
-                //Èç¹û³É¹¦´ò°ÜË®É¥Ê¬
-                cout<<"¾­¹ýÒ»·¬¼¤Õ½£¬ÄãÃÇÖÕÓÚÒ»Æð»÷°ÜÁËË®É¥Ê¬£¬¿ÉÊÇÅÔ±ßµÄÐ¡ÓïÈ´Îæ×Å¸ì²²£¬ÓÐÐ©²»¶Ô¾¢..."<<endl;
-                pl.set_status(LAKE_SAVE);
+                Zombie* z=new Water_Zombie;
+                switch(pl.fight(z))
+                {
+                    case 0:
+                        this->stage=DIE;
+                        break;
+                    case 1: 
+                        pl.move_to(game_map.get_pos("wharf"));
+                        cout<<"ÄãºÍÐ¡Óï¸Ï½ôµôÍ·£¬·ÉËÙ»®Ïò°¶±ß£¬ÌÓ»ØË®ÉÏÂëÍ·¡£"<<endl;
+                        delete z;
+                        break;
+                    case 2:
+                        //Èç¹û³É¹¦´ò°ÜË®É¥Ê¬
+                        cout<<"¾­¹ýÒ»·¬¼¤Õ½£¬ÄãÃÇÖÕÓÚÒ»Æð»÷°ÜÁËË®É¥Ê¬£¬¿ÉÊÇÅÔ±ßµÄÐ¡ÓïÈ´Îæ×Å¸ì²²£¬ÓÐÐ©²»¶Ô¾¢..."<<endl;
+                        pl.set_status(LAKE_SAVE);
+                        delete z;
+                }
                 return;
             }
             else if(msg=="hint")

@@ -24,7 +24,6 @@ private:
     int needEXP[9]; //升级所需经验数组 
 
     int aggress;//攻击力
-    int weaponaggress = 0 ;//武器攻击力 ，初始没有武器 = 0 
 
     int currentHP;//当前体力
     int MAXHP ; //最大体力上限
@@ -49,6 +48,7 @@ public:
     int getcurrentHP () const;  
     int getspeed () const ;
     int get_move_capability() const ;
+    int getweaponaggress() const;
     Vehicle* get_vehicle() const;
     Weapon* get_weapon() const;
 

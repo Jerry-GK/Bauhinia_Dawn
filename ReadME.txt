@@ -1,12 +1,14 @@
 A MUD game, but with slots in ZJU. (Zombie Theme).
 
 To run:
-Run MUD.exe in bin directly
+method 1:
+Run MUD.exe (static link version) in bin directly
 
-or
+method 2:
+Enter command "make" in terminal and run bin/test.exe  
 
-g++ src/* -o bin/test.exe
+method 3:
+Enter command "g++ src/*.cpp -o bin/test.exe" in terminal and run bin/test.exe
 
-or
-
+method 4:
 open the folder with vscode and run using code runner 

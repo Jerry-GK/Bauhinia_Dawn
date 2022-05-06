@@ -5,7 +5,7 @@ Player::Player()
     name = "小泽" ;
     level = 1;
     currentEXP = 0 ;
-    aggress =  global_initial_currentHP;
+    aggress =  global_initial_agress;
     currentHP = global_initial_currentHP;
     MAXHP = initial_MAXHP;
     speed = global_initial_speed ;
@@ -55,9 +55,13 @@ Weapon* Player::get_weapon() const
     return cur_wep;
 }
 
+int Player::getweaponaggress() const
+{
+    return (cur_wep==NULL)?0:cur_wep->getattack();
+}
+
 void Player::equipWeapon(Weapon* a ) //装备武器
 {
-    weaponaggress = a->getattack() ;
     cur_wep =  a ;
     cout << "装备了武器：" << a->getname() << " ,武器攻击力为：" << a->getattack() << endl << endl; 
 }
@@ -69,7 +73,6 @@ void Player::disequipWeapon () //装备武器
         cout<<"当前未装备武器"<<endl;
         return;
     }
-    weaponaggress = 0 ;
     cout << "卸下了武器：" << cur_wep->getname() << " ,武器攻击力为：" << cur_wep->getattack() << endl << endl; 
     delete cur_wep ;
     cur_wep = NULL ;
@@ -162,7 +165,7 @@ void Player::show_state()//显示玩家属性状态
     if (level != 10 ) {cout<<"经验："<<currentEXP<<"  升级需要："<<needEXP[level-1] << endl;}
     else {cout << "你已经达到了最高等级： level 10 !" << endl;} //这里存在 满级时数组越界的bug 需要判断是否满级
     cout<<"攻击力："<<aggress<<endl;
-    cout<<"武器攻击力："<<weaponaggress<<endl;
+    cout<<"武器攻击力："<<this->getweaponaggress()<<endl;
     cout<<"当前体力/最大体力： "<<currentHP<<"/"<<MAXHP<<endl;
     cout<<"移动速度："<<speed<<endl;
     cout<<"交通工具："<<str_veh<<endl;
@@ -299,7 +302,8 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
     cout << "\n开始战斗 , 你要击败的是： " << z->getname() << endl; 
     z->show();
     cout << "你当前状态：" << endl; 
-    cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress << "/" << weaponaggress << endl;
+    cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress 
+         << "/" << this->getweaponaggress() << endl;
     while (1)
     {
         cout << "\nRound" << round << endl << "你的选择操作是(fighting状态只能按提示操作):" << endl 
@@ -358,7 +362,7 @@ void Player::attack(Weapon *a,Zombie *z)
     //rand(20) + aggress > def can dealt damage to zombie by your weapon + 1;
     if ( rand()*20 + aggress > z->getdef())
     {
-        z->getdamage (weaponaggress + 1) ;
+        z->getdamage (aggress*0.3+this->getweaponaggress() + 1) ;
     }
     else 
     {

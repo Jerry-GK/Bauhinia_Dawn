@@ -15,7 +15,8 @@ private:
     int EXP;//被击败的经验值
 
 public:
-    Zombie (const string setname) ;
+    Zombie();
+    Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP) ;
     virtual void show();
     virtual void attack(Player* p);
     virtual ~Zombie();
@@ -23,21 +24,22 @@ public:
     int getHP  () const ;
     int getEXP () const ;
     int getdef () const ;
+    int getaggress() const ;
     string getname () const ;   
 };
 
 class Roll_Zombie:public Zombie
 {
-
+public:
+    Roll_Zombie();
+    void attack(Player* p) ;
+    void special_attack(Player *p);
 };
-
-class Security_Zombie:public Zombie
-{
-
-};
-
 
 class Water_Zombie:public Zombie
 {
-
+public:
+    Water_Zombie();
+    void attack(Player* p) ;
+    void special_attack(Player *p);
 };
