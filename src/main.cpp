@@ -1,6 +1,5 @@
 #include <iostream>
 #include "game.h"
-#include "ui.h"
 #include "game_map.h"
 #include "player.h"
 #include "vehicle.h"

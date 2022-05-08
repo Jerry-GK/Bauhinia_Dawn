@@ -1,22 +1,59 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include "global.h"
 using namespace std;
 
 class Food
 {
-private:
+protected:
     string name ;
-    int effect ;
     int occupancy ;
 public:
-    Food(const string setname);
-
+    Food(const string setname, const int setoccupancy);
     string getname()const ;
-
-    int geteffect()const ;
-
     int getoccupancy()const ;
-    
+    virtual void show() const;
+    virtual ~Food() = 0;
+
+    static Food* new_food(string name);
+    static bool isFood(string item) ;
 };
-bool isFood(string item) ;
+
+class Bread : public Food
+{
+private:
+    int effect;
+    int cost;
+public:
+    Bread(int seteffect, int cost);
+    int geteffect() const;
+    int getcost() const;
+    void show() const;
+};
+
+class Apple : public Food
+{
+private:
+    int effect;
+    int cost;
+public:
+    Apple(int seteffect, int setcost);
+    int geteffect() const;
+    int getcost() const;
+    void show() const;
+};
+
+class RedTube : public Food
+{
+public:
+    RedTube();
+    void show() const;
+};
+
+class GreenTube : public Food
+{
+public:
+    GreenTube();
+    void show() const;
+};

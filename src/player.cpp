@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-    name = "小泽" ;
+    name = global_player_name ;
     level = 1;
     currentEXP = 0 ;
     aggress =  global_initial_agress;
@@ -10,6 +10,7 @@ Player::Player()
     MAXHP = initial_MAXHP;
     speed = global_initial_speed ;
     move_capability = global_initial_move_capability ;
+    money = global_initial_money;
     for (int i = 0 ; i < 9 ; i++)
     {
         needEXP[i] = global_initial_EXP[i] ;
@@ -60,6 +61,11 @@ int Player::getweaponaggress() const
     return (cur_wep==NULL)?0:cur_wep->getattack();
 }
 
+int Player::getmoney() const
+{
+    return money;
+}
+
 void Player::equipWeapon(Weapon* a ) //装备武器
 {
     cur_wep =  a ;
@@ -79,11 +85,17 @@ void Player::disequipWeapon () //装备武器
 }
 void Player::take_vehicle (Vehicle* a) //上车 ，速度、移动能力 被 交通工具 设置
 {
+    if(a==NULL)
+    {
+        cout << "不存在该交通工具！" << endl;
+        return;
+    }
     if(cur_veh!=NULL)
     {
         cout<<"你已经在"<<cur_veh->getname()<<"上了，请先离开该交通工具。"<<endl;
         return;
     }
+    a->show();
     speed = a->getspeed() ;
     move_capability = a->getmove_capability() ;
     cur_veh = a;
@@ -128,9 +140,13 @@ void Player::levelUP(int currentlevel)//升级
     level ++ ;
     aggress += 1 ;
     //升级会使得最大体力值提升 ，同时恢复10%最大体力值的体力 ， 攻击力 + 1
-    show_info("levelUP::something need to be writed");
+    cout << "升级：你获得了经验值并升到了"<<level<<"级！" << endl;
 }
 
+void Player::change_money(const int m)
+{
+    money = money + m;
+}
 //new:
 
 void Player::set_pos(Position* p)
@@ -167,6 +183,7 @@ void Player::show_state()//显示玩家属性状态
     cout<<"攻击力："<<aggress<<endl;
     cout<<"武器攻击力："<<this->getweaponaggress()<<endl;
     cout<<"当前体力/最大体力： "<<currentHP<<"/"<<MAXHP<<endl;
+    cout << "现金数量：￥" << money << endl;
     cout<<"移动速度："<<speed<<endl;
     cout<<"交通工具："<<str_veh<<endl;
     cout<<"当前武器："<<str_wep<<endl;
@@ -183,33 +200,61 @@ Vehicle* Player::get_veh()
     return this->cur_veh;
 }
 
-void Player::pick(string item)
+void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
 {
-    if (isFood(item) )
+    if (Food::isFood(item) )
     {
-        Food a(item) ;
-        if (mybag.add(item,a.getoccupancy() ) )
+        Food *a = Food::new_food(item);
+        a->show();
+
+        if (mybag.add(item,a->getoccupancy() ) )
         {
-            cout << "拾取了 " << item << " 已用空间：" << mybag.getcurcapacity() << endl;
+            if(a->getname()==global_bread_name && mode==BUY)
+            {
+                Bread *b = dynamic_cast<Bread *> (a);
+                if(getmoney()<b->getcost())
+                {
+                    cout << "购买失败！所需花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                    delete a;
+                    return;
+                }
+                change_money(-b->getcost());
+                cout << "花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+            }
+            cout << "拾取/购买了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
         }
         else
         {
-            cout << "拾取失败 需要空间：" << a.getoccupancy() 
+            cout << "拾取/购买失败 需要空间：" << a->getoccupancy() 
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity() - mybag.getcurcapacity() ;
         }
+        delete a;
     }
-    else if (isWeapon (item))
+    else if (Weapon::isWeapon (item))
     {
-        Weapon a(item) ;
-        if (mybag.add(item,a.getoccupancy() ) )
+        Weapon *a = Weapon::new_wep(item);
+        a->show();
+       if (mybag.add(item,a->getoccupancy() ) )
         {
-            cout << "拾取了 " << item << " 已用空间：" << mybag.getcurcapacity() << endl;
+            if(mode==BUY)
+            {
+                if(getmoney()<a->getcost())
+                {
+                    cout << "购买失败！所需花费￥" << a->getcost() <<", 剩余￥"<<getmoney() << endl;
+                    delete a;
+                    return;
+                }
+                change_money(-a->getcost());
+                cout << "花费￥" << a->getcost() <<", 剩余￥"<<getmoney() << endl;
+            }
+            cout << "拾取/购买了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
         }
         else 
         {
-            cout << "拾取失败 需要空间：" << a.getoccupancy() 
+            cout << "拾取失败 需要空间：" << a->getoccupancy() 
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity()- mybag.getcurcapacity() ;
         }
+        delete a;
     }
     else
     {
@@ -219,33 +264,41 @@ void Player::pick(string item)
 
 void Player::use(string item)
 {
-    if ( isFood(item) )
+    if(!mybag.find(item))
     {
-        if (mybag.find(item))
+        cout << "使用失败！背包内不存在这个物品" << endl;
+        return;
+    }
+    if ( Food::isFood(item) )
+    {
+        Food *a = Food::new_food(item);
+        if(a->getname()==global_bread_name)
         {
-            Food a(item) ;
-            recoverHP(a.geteffect());
+            Bread *b = dynamic_cast<Bread *> (a);
+            recoverHP(b->geteffect());
             mybag.det(item);
             cout << "使用了 " << item << " 回复体力至：" << currentHP << endl;
             //使用食物 恢复体力 食物消失
         }
-        else
+        else if(a->getname()==global_apple_name)
         {
-            cout << "使用失败！背包内不存在这个物品" << endl;
-        }
-    }
-    else if (isWeapon (item ) )
-    {
-        if (mybag.find(item ))
-        {
-            disequipWeapon();
-            Weapon* p =  new Weapon (item) ;
-            equipWeapon(p);
+            Apple *b = dynamic_cast<Apple *> (a);
+            recoverHP(b->geteffect());
+            mybag.det(item);
+            cout << "使用了 " << item << " 回复体力至：" << currentHP << endl;
+            //使用食物 恢复体力 食物消失           
         }
         else 
         {
-            cout << "使用失败！背包内不存在这个物品" << endl;
+            cout << "当前无法使用该物品！" << endl;
         }
+        delete a;
+    }
+    else if (Weapon::isWeapon (item ) )
+    {
+        disequipWeapon();
+        Weapon* p =  Weapon::new_wep (item) ;
+        equipWeapon(p);
     }
     else
     {
@@ -257,11 +310,11 @@ void Player::drop(string item)
 {
     if (mybag.find(item))
     {
-        if (isFood(item))
+        if (Food::isFood(item))
         {
             mybag.det(item);
         }
-        else if (isWeapon(item))
+        else if (Weapon::isWeapon(item))
         {
             if (cur_wep!=NULL && item == cur_wep->getname())
             {
@@ -301,7 +354,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
     string msg = "" ;
     cout << "\n开始战斗 , 你要击败的是： " << z->getname() << endl; 
     z->show();
-    cout << "你当前状态：" << endl; 
+    cout << "\n你当前状态：" << endl; 
     cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress 
          << "/" << this->getweaponaggress() << endl;
     while (1)

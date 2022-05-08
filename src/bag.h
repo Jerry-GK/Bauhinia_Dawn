@@ -8,8 +8,8 @@ using namespace std;
 
 struct info
 {
-    int size ; //å ç”¨å¤§å°
-    int num = 0; //æ•°é‡
+    int size ; //Õ¼ÓÃ´óĞ¡
+    int num = 0; //ÊıÁ¿
 };
 typedef info* Info ;
 class Bag
@@ -17,14 +17,14 @@ class Bag
 protected:
     int maxcapacity;
     int curcapacity = 0 ;
-    map <string,Info> bag ; //<åå­—ï¼Œå ç”¨å¤§å°>
+    map <string,Info> bag ; //<Ãû×Ö£¬Õ¼ÓÃ´óĞ¡>
 public:
     Bag();
     void show();
     bool find(string item);
     void det (string item);
-    bool add (string item , int item_size); //åœ¨èƒŒåŒ…å†…æ·»åŠ ç‰©å“ æˆåŠŸåˆ™è¿”å›true
-    //è¿™äº›å‡½æ•°ç”¨äº†è¿­ä»£å™¨æŒ‡å‘bag.beginï¼ˆï¼‰,ä¸èƒ½åŠ const
+    bool add (string item , int item_size); //ÔÚ±³°üÄÚÌí¼ÓÎïÆ· ³É¹¦Ôò·µ»Øtrue
+    //ÕâĞ©º¯ÊıÓÃÁËµü´úÆ÷Ö¸Ïòbag.begin£¨£©,²»ÄÜ¼Óconst
     int getcurcapacity () const ;
     int getmaxcapacity () const ;
 };  

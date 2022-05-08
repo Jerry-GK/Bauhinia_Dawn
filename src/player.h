@@ -5,7 +5,6 @@
 #include "bag.h"
 #include "zombie.h"
 #include "vehicle.h"
-#include "ui.h"
 #include "game_map.h"
 #include "global.h"
 #include "food.h"
@@ -31,6 +30,8 @@ private:
     int speed;//移动速度
     int move_capability;//移动能力（为0时只能在陆地行走，为1时可以两栖）
 
+    int money;//手里钱的数量
+
     Bag mybag;//背包
     Vehicle* cur_veh;//当前乘坐的交通工具（NULL表示双脚）
     Weapon* cur_wep;//当前的武器（NULL表示双手）
@@ -49,12 +50,14 @@ public:
     int getspeed () const ;
     int get_move_capability() const ;
     int getweaponaggress() const;
+    int getmoney() const;
     Vehicle* get_vehicle() const;
     Weapon* get_weapon() const;
 
     void recoverHP(const int recovery); //恢复生命值
     void gainEXP(const int EXP);//获得经验值
-    void levelUP(const int currentlevel);//升级 
+    void levelUP(const int currentlevel);//升级
+    void change_money(const int m);//money=money+m（可为负数）
     Bag get_bag() const;
     void set_pos(Position* p);
     void set_status(PLAYER_STAGE s);
@@ -63,7 +66,7 @@ public:
     void show_state();//显示玩家属性状态
 
     //bag, item
-    void pick(string item);//拾取背包中的某种物品
+    void pick(string item, PICK_MODE mode);//拾取背包中的某种物品
 
     void use(string item);//使用背包中的某种物品
 

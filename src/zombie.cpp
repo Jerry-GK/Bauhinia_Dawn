@@ -2,11 +2,11 @@
 
 Zombie::Zombie()
 {
-    name="normal";
-    aggress=7;
-    HP=30;
-    def=2;
-    EXP=80;
+    name=global_ordinary_name;
+    aggress=global_ordinary_aggress;
+    HP=global_ordinary_HP;
+    def=global_ordinary_def;
+    EXP=global_ordinary_EXP;
 }
 Zombie::Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP) 
 {
@@ -18,6 +18,7 @@ Zombie::Zombie (const string setname , const int setaggress , const int setHP , 
 }
 void Zombie::show()
 {
+    cout << "丧尸信息: " << endl;
     cout<<"名称："<<name<<endl;
     cout<<"攻击力："<<aggress<<endl;
     cout<<"血量："<<HP<<endl;
@@ -69,7 +70,8 @@ Zombie::~Zombie()
 }
 
 //roll zombie  -------------------------------------------
-Roll_Zombie::Roll_Zombie():Zombie("roll",5,50,10,200) {}
+Roll_Zombie::Roll_Zombie():Zombie
+(global_roll_name,global_roll_aggress,global_roll_HP,global_roll_def,global_roll_EXP) {}
 
 void Roll_Zombie::attack(Player* p)
 {
@@ -92,7 +94,8 @@ void Roll_Zombie::special_attack(Player *p)
 
 //water  zombie  -------------------------------------------
 
-Water_Zombie::Water_Zombie():Zombie("water",10,20,12,150) {}
+Water_Zombie::Water_Zombie():Zombie
+(global_water_name,global_water_aggress,global_water_HP,global_water_def,global_water_EXP) {}
 
 void Water_Zombie::attack(Player* p)
 {

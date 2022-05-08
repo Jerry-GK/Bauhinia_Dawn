@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "ui.h"
 #include "game_map.h"
 #include "player.h"
 #include "vehicle.h"
