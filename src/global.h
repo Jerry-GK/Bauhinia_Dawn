@@ -96,14 +96,17 @@ extern const int global_water_HP;
 extern const int global_water_def;
 extern const int global_water_EXP;
 
+//游戏
+extern const int global_jump_damage;
+
 //物件字符串集合
 extern set<string> global_set_weapons;
 extern set<string> global_set_vehicles;
 extern set<string> global_set_foods;
 enum GAME_STAGE//游戏当前状态的枚举类型
 {
+    NOT_BEGIN,//游戏尚未开始
     PLAYING,//正常游戏状态
-    PARTNER_DIE,//伙伴已经死去
     DIE,//结局：死去
     ALONE_SUC,//结局：一人独自成功逃生
     SUC,//结局：成功带伙伴一起逃生
@@ -135,6 +138,8 @@ enum PLAYER_STAGE
     ROOF_HALL,
     ROOF_TOP,
     ROOF_LEAVE,
+    ROOF_SUC,
+    ROOF_TO_WHARF,
     //wharf
     WHARF_DECIDE,
     //lake

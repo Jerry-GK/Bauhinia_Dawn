@@ -114,13 +114,15 @@ void Player::get_off_vehicle()//下车 ，速度、移动能力 恢复成 $初始值$
     delete cur_veh;
     cur_veh=NULL;
 }
-void Player::recoverHP(const int recovery)//恢复生命值
+void Player::changeHP(const int change)//恢复/损失生命值
 {
-    currentHP += recovery ;
+    currentHP += change ;
     if (currentHP > MAXHP)
     {
         currentHP = MAXHP ;
     }
+    if(currentHP<0)
+        currentHP = 0;
 }
 
 void Player::gainEXP(const int EXP) //获得经验值
@@ -136,7 +138,7 @@ void Player::levelUP(int currentlevel)//升级
 {
     currentEXP -= needEXP[level - 1] ;
     MAXHP += needEXP[level-1] / 10 ;
-    recoverHP(0.1 * MAXHP) ;
+    changeHP(0.1 * MAXHP) ;
     level ++ ;
     aggress += 1 ;
     //升级会使得最大体力值提升 ，同时恢复10%最大体力值的体力 ， 攻击力 + 1
@@ -275,7 +277,7 @@ void Player::use(string item)
         if(a->getname()==global_bread_name)
         {
             Bread *b = dynamic_cast<Bread *> (a);
-            recoverHP(b->geteffect());
+            changeHP(b->geteffect());
             mybag.det(item);
             cout << "使用了 " << item << " 回复体力至：" << currentHP << endl;
             //使用食物 恢复体力 食物消失
@@ -283,7 +285,7 @@ void Player::use(string item)
         else if(a->getname()==global_apple_name)
         {
             Apple *b = dynamic_cast<Apple *> (a);
-            recoverHP(b->geteffect());
+            changeHP(b->geteffect());
             mybag.det(item);
             cout << "使用了 " << item << " 回复体力至：" << currentHP << endl;
             //使用食物 恢复体力 食物消失           
@@ -336,16 +338,37 @@ bool Player::have(string item)
 }
 
 //--------------------------------------to be implemented------------------------------------------------
-void Player::move_to(Position* p)
+bool Player::move_to(Position* p)
 {
     if(p==NULL)
     {
         cout<<"不存在该地点！"<<endl;
-        return;
+        return false; 
+    }
+    cout << "当前状态下前往" << p->get_name() << "需要消耗体力: " << get_HPcost(p) << "，是否确认前往？（输入 \"yes\" 确认）" << endl;
+    string ensure;
+    getline(cin, ensure);
+    if(ensure!="yes")
+    {
+        cout << "你没有选择前往" << p->get_name() << endl;
+        return false;
+    }
+    if (getcurrentHP() < get_HPcost(p))
+    {
+        cout << "当前载具下，体力无法支撑你前往该地点！" << endl;
+        return false;
     }
     this->set_pos(p);
     cout<<"来到："<<p->get_name()<<endl;
-    //根据当前pos与目标p的距离(根据xy坐标)，以及速度，计算体力变化的逻辑
+    //调用体力消耗函数
+    this->currentHP -= get_HPcost(p);
+    return true;
+}
+
+int Player::get_HPcost(Position *p)//得到当前位置去p的体力消耗值
+{
+    //to be fill!!!!!!!
+    return 0;
 }
 
 int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0

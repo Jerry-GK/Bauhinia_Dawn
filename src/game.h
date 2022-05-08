@@ -15,7 +15,9 @@ private:
     GAME_STAGE stage;//游戏状态
     string input_box;//输入框输入的内容（未提交）
     string msg;//已提交的输入内容
-    
+    bool partner_alive;//同伴是否活着
+    bool enemy_alive;//敌人（叶教授）是否活着
+
 public:
     void Init();//初始化
 

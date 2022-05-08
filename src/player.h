@@ -54,7 +54,7 @@ public:
     Vehicle* get_vehicle() const;
     Weapon* get_weapon() const;
 
-    void recoverHP(const int recovery); //恢复生命值
+    void changeHP(const int recovery); //恢复生命值
     void gainEXP(const int EXP);//获得经验值
     void levelUP(const int currentlevel);//升级
     void change_money(const int m);//money=money+m（可为负数）
@@ -92,8 +92,9 @@ public:
 
     void get_off_vehicle();//下车 ，速度、移动能力 恢复成初始值
 
-    void move_to(Position* p);
+    bool move_to(Position* p);
 
+    int get_HPcost(Position *p);
 };
 
 

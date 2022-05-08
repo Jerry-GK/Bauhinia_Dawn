@@ -103,6 +103,8 @@ const int global_water_HP = 50;
 const int global_water_def = 6;
 const int global_water_EXP = 150;
 
+//游戏
+const int global_jump_damage = 40;
 
 //物件字符串集合
 set<string> global_set_weapons={global_fork_name,global_knife_name,global_umbrella_name,global_gun_name};
