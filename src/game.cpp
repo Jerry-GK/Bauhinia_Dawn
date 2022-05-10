@@ -10,42 +10,42 @@ void Game::Init()
     msg.clear();
     partner_alive = true;
     enemy_alive = true;
-    p.set("dormitory",0,0);//ËÞÉá
+    p.set("dormitory",20,120);//ËÞÉá
     p.add_status(DOR_TO_LOOK_OUTSIDE);
     //
     game_map.add_pos(p);
     
-    p.set("shop",0,0);//³¬ÊÐ
+    p.set("shop",22,115);//³¬ÊÐ
     p.add_status(SHOP_SEARCH);
     //
     game_map.add_pos(p);
 
-    p.set("dor gate",0,0);//ËÞÉáÃÅ¿Ú
+    p.set("dor gate",15,115);//ËÞÉáÃÅ¿Ú
     p.add_status(GATE_FIGHT);
     //
     game_map.add_pos(p);
 
-    p.set("west building",0,0);//Î÷½Ì
+    p.set("west building",20,50);//Î÷½Ì
     p.add_status(WEST_INTO_BUILDING);
     //
     game_map.add_pos(p);
 
-    p.set("bio lab",0,0);//ÉúÎïÊµÑéÊÒ
+    p.set("bio lab",70,10);//ÉúÎïÊµÑéÊÒ
     p.add_status(BIO_INTO_BUILDING);
     //
     game_map.add_pos(p);
     
-    p.set("roof",0,0);//Ô­¹ÜÔºÂ¥¶¥
+    p.set("roof",25,65);//Ô­¹ÜÔºÂ¥¶¥
     p.add_status(ROOF_HALL);
     //
     game_map.add_pos(p);
 
-    p.set("wharf",0,0);//Ë®ÉÏÂëÍ·
+    p.set("wharf",35,75);//Ë®ÉÏÂëÍ·
     p.add_status(WHARF_DECIDE);
     //
     game_map.add_pos(p);
 
-    p.set("lake",0,0);//ÆôÕæºþ
+    p.set("lake",35,75);//ÆôÕæºþ
     p.add_status(LAKE_ROW);
     //
     game_map.add_pos(p);
@@ -106,7 +106,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
     }
     else if(msg=="map")
     {
-        this->game_map.show();
+        pl.showmap() ;
         return;
     }
     else if(msg=="bag")
@@ -687,7 +687,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             else if(msg=="fight")
             {
                 //fight success
-                switch (2) // "2" is to be replaced by "fight_many(v_zom)", where "int fight_many(vector<Zombie*>)"
+                switch (pl.fight_many(v_zom)) // "2" is to be replaced by "fight_many(v_zom)", where "int fight_many(vector<Zombie*>)"
                 {
                     case 0:
                         this->stage = DIE;

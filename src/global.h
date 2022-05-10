@@ -98,6 +98,8 @@ extern const int global_water_EXP;
 
 //游戏
 extern const int global_jump_damage;
+extern const double global_move_const;
+extern const string global_map_open_cmd;
 
 //物件字符串集合
 extern set<string> global_set_weapons;

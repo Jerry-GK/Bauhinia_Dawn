@@ -15,7 +15,6 @@ private:
 public:
     void add_pos(Position p);
     Position* get_pos(string name);
-    void show();
 };
 
 class Position
@@ -35,5 +34,9 @@ public:
     vector<PLAYER_STAGE> get_status();
     
     friend class GameMap;
+
+    double getX () const ;
+
+    double getY () const ;
 };
 

@@ -34,8 +34,8 @@ const string global_player_name = "小泽";
 const int global_initial_speed = 1 ; // 初始移动速度
 const int global_initial_move_capability = 0 ;// 初始移动能力
 const int global_initial_agress = 20;
-const int global_initial_currentHP = 80 ;// 初始当前体力
-const int initial_MAXHP = 100 ;// 初始最大体力
+const int global_initial_currentHP = 800 ;// 初始当前体力
+const int initial_MAXHP = 1000 ;// 初始最大体力
 const int global_initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
 const int global_initial_money = 999999;
 const int global_initial_Bag_occupancy = 999999;
@@ -105,6 +105,8 @@ const int global_water_EXP = 150;
 
 //游戏
 const int global_jump_damage = 40;
+const double global_move_const = 0.04 ;
+const string global_map_open_cmd = "start ../doc/zjg_map.png";
 
 //物件字符串集合
 set<string> global_set_weapons={global_fork_name,global_knife_name,global_umbrella_name,global_gun_name};

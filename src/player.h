@@ -8,6 +8,9 @@
 #include "game_map.h"
 #include "global.h"
 #include "food.h"
+#include <sstream>
+#include <stdlib.h> 
+#include <math.h>
 
 using namespace std;
 
@@ -65,6 +68,9 @@ public:
     PLAYER_STAGE get_status();
     void show_state();//显示玩家属性状态
 
+    //map
+    void showmap() const ;
+
     //bag, item
     void pick(string item, PICK_MODE mode);//拾取背包中的某种物品
 
@@ -79,11 +85,13 @@ public:
     void disequipWeapon () ; //卸下当前武器 ， 人物的武器攻击力值 = 0 ；
     
     //fight
-    int fight(Zombie *z); //打赢了返回2 逃跑返回1 被击败返回0
+    int  fight(Zombie *z); //打赢了返回2 逃跑返回1 被击败返回0
 
     void attack(Weapon* w, Zombie* z);//用某种武器攻击丧尸
 
     void getdamage(const int damage);//被攻击
+
+    int fight_many(vector <Zombie*> v_zome ) ; //打一群僵尸，返回值 : 打赢了返回2 逃跑返回1 被击败返回0
 
     //vehicle
     Vehicle* get_veh();

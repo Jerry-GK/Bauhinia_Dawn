@@ -192,6 +192,13 @@ void Player::show_state()//显示玩家属性状态
     cout<<"当前位置："<<pos->get_name()<<endl;
 }
 
+void Player::showmap() const 
+{
+    cout << "当前位置是：" << pos->get_name () << "(" << pos->getX() <<  "," << pos->getY() << ")" << endl;
+    cout << "Loading map, please wait..." << endl;
+    system(global_map_open_cmd.c_str());
+}
+
 Bag Player::get_bag() const
 {
     return this->mybag;
@@ -367,8 +374,10 @@ bool Player::move_to(Position* p)
 
 int Player::get_HPcost(Position *p)//得到当前位置去p的体力消耗值
 {
-    //to be fill!!!!!!!
-    return 0;
+    int distance = ( p->getX() - this->get_pos()->getX() )*( p->getX() - this->get_pos()->getX() )
+    + ( p->getY() - this->get_pos()->getY() ) * ( p->getY() - this->get_pos()->getY() ) ;
+    distance = sqrt(distance) ;
+    return distance * global_move_const / speed ;
 }
 
 int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
@@ -382,7 +391,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
          << "/" << this->getweaponaggress() << endl;
     while (1)
     {
-        cout << "\nRound" << round << endl << "你的选择操作是(fighting状态只能按提示操作):" << endl 
+        cout << "\nRound"<< round << "------------" << endl  << "你的选择操作是(fighting状态只能按提示操作):" << endl 
              <<  "hit: 攻击丧尸\nuse <武器名>: 更换武器/使用食物(也会被攻击！)\nescape: 逃跑"  << endl << "\n<fighting> Please Enter: " ;
         getline(cin,msg);
         if (msg == "escape")
@@ -420,6 +429,140 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
         }
         round++;
     }
+}
+
+//打一群僵尸，返回值 : 打赢了返回2 逃跑返回1 被击败返回0 （传参bug 返回-1）
+int Player::fight_many(vector <Zombie*> v_zome )   
+{
+    int num_z = v_zome.size() ;
+    if (!num_z) {return -1 ;}
+
+    //before fight 
+    int round = 1 ;
+    string msg = "" ;
+    cout << "\n开始战斗 , 你要击败的有： "  << endl; 
+    for (int i = 0 ; i < v_zome.size() ; i++)
+    {
+        cout << i+1 << ".  " << v_zome[i]->getname() << " 攻击：" << v_zome[i]->getaggress() <<
+        " 血量：" << v_zome[i]->getHP() << " 防御：" << v_zome[i]->getdef() << endl;
+    }
+    cout << "\n你当前状态：" << endl; 
+    cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress 
+         << "/" << this->getweaponaggress() << endl;
+
+
+
+
+    while (1)
+    {
+        cout << "\nRound" << round << "------------" << endl << "你的选择操作是(fighting状态只能按提示操作):" << endl 
+             <<  "hit: 攻击丧尸\nuse <武器名>: 更换武器/使用食物(也会被攻击！)\nescape: 逃跑"  << endl << "\n<fighting> Please Enter: " ;
+        getline(cin,msg);
+        if (msg == "escape")
+        {
+            if (num_z == 1 ) cout << "\n你感觉有些不对劲 , 你逃跑了！留得青山在,不怕没柴烧" << endl;
+            else {cout << "\n俗话说双拳难敌四手 , 你逃跑了！留得青山在,不怕没柴烧" << endl;} //为了日后fight_many可以覆盖fight
+            return 1 ;
+        }
+        else if((msg.find("use")==0)&&msg.length()>=5)
+        {
+            this->use(msg.substr(4,msg.length()-4));
+            msg.clear();
+        }
+        else if (msg == "hit" && v_zome.size() > 1)
+        {
+            cout << "\n你要选择攻击的僵尸是:(输入序号)"  << endl ;
+            int i =  1;
+            for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
+            {
+                cout << i << ". " << (*p)->getname() << "当前生命值：" << (*p)->getHP() << endl;
+                i ++ ;
+            } // choose the attack object  ,like(1.水僵尸 2.卷王僵尸 3.一般僵尸)
+            cout << "\n<fighting> Please Enter: " ;
+            getline(cin,msg); //得到字符串 转换成整数int
+
+            stringstream ss ; ss.clear() ;
+            ss << msg ; int choose ; ss >> choose ; ss.clear() ;
+
+            i = 1 ;
+            for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
+            {
+                if (i == choose)
+                {
+                    attack(cur_wep,*p) ;
+                    if ( (*p) ->getHP() == 0) //杀死了这个丧尸
+                    {
+                        cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
+                        this->gainEXP((*p)->getEXP());
+                        v_zome.erase(p);
+                    }
+                    break ;
+                }
+                i++ ;
+            }
+            if (i != choose) //输入有问题 , 随机攻击一个
+            {
+                cout << "\n(输入有误) 你手忙脚乱，无力思索要攻击哪个，便随便攻击了其中一个" << endl;
+                choose = rand() % v_zome.size() ; i = 0 ;
+                for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
+                {
+                    if (i == choose)
+                    {
+                        attack(cur_wep,*p) ;
+                        if ( (*p) ->getHP() == 0) //杀死了这个丧尸
+                        {
+                            cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
+                            this->gainEXP((*p)->getEXP());
+                            v_zome.erase(p);
+                        }
+                        break ;
+                    }
+                    i++ ;
+                }
+            }
+
+            //攻击阶段结束了 检定是否全部击败
+            if (v_zome.empty()) //打败了所有的丧尸
+            {
+                cout << "你历经万难，击败了所有的丧尸……你成功活下来了……" << endl;
+                return 2 ;
+            }
+
+        }
+
+        else if (msg == "hit" && v_zome.size() == 1)
+        {
+            attack(cur_wep,v_zome[0]) ;
+            if (!v_zome[0]->getHP()) //打败了僵尸
+            {
+                cout << "\n你克服困难,终于击败了最后一只丧尸！" << endl;
+                this->gainEXP(v_zome[0]->getEXP());
+                return 2;
+            }
+        }
+        
+        else
+        {
+            cout << endl << "(指令无效) 你不知道该做什么，但丧尸好像并不愿意等待……" << endl;
+            msg.clear();
+            continue;
+        }
+        //玩家操作结束
+        //玩家被所有活着的僵尸轮流进攻
+        for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
+        {
+            (*p)->attack(this) ;
+            if ( !getcurrentHP() )//被僵尸打败
+            {
+                cout << "\n很遗憾,你棋差一招，被丧尸击败了" << endl;
+                return 0 ;
+            }
+        } //死掉的僵尸自动被delete ;
+
+
+        round++;
+    }
+
 }
 
 void Player::getdamage(const int damage)//被攻击
