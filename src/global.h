@@ -85,16 +85,19 @@ extern const int global_ordinary_aggress;
 extern const int global_ordinary_HP;
 extern const int global_ordinary_def;
 extern const int global_ordinary_EXP;
+extern const int global_ordinary_money;
 extern const string global_roll_name;
 extern const int global_roll_aggress;
 extern const int global_roll_HP;
 extern const int global_roll_def;
 extern const int global_roll_EXP;
+extern const int global_roll_money;
 extern const string global_water_name;
 extern const int global_water_aggress;
 extern const int global_water_HP;
 extern const int global_water_def;
 extern const int global_water_EXP;
+extern const int global_water_money;
 
 //游戏
 extern const int global_jump_damage;
@@ -150,7 +153,11 @@ enum PLAYER_STAGE
     LAKE_SAVE,
     LAKE_SUC,
     //south gate
-    SOUTH_END
+    SOUTH_END,
+    //east building
+    EAST_BUILDING,
+    //library
+    LIBRARY
 };
 
 enum PICK_MODE //普通捡起或购买

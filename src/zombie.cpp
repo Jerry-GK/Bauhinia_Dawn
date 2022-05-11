@@ -7,14 +7,16 @@ Zombie::Zombie()
     HP=global_ordinary_HP;
     def=global_ordinary_def;
     EXP=global_ordinary_EXP;
+    award_money = global_ordinary_money;
 }
-Zombie::Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP) 
+Zombie::Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP, const int setmoney) 
 {
     name = setname ;
     aggress = setaggress ;
     HP = setHP ;
     def = setdef ;
     EXP  = setEXP ;
+    award_money = setmoney;
 }
 void Zombie::show()
 {
@@ -43,6 +45,11 @@ int Zombie::getaggress () const
     return aggress ;
 }
 
+int Zombie::getmoney() const 
+{
+    return award_money;
+}
+
 string Zombie::getname () const 
 {
     return name ;
@@ -50,7 +57,8 @@ string Zombie::getname () const
 
 void Zombie::attack(Player* p) // 一般攻击
 {
-    cout << name << "发动了攻击！" << endl;
+    cout <<"\n"<< name << "发动了攻击！" << endl;
+    //_sleep(0.4*1000);
     p->getdamage (aggress) ;
 }
 
@@ -71,14 +79,14 @@ Zombie::~Zombie()
 
 //roll zombie  -------------------------------------------
 Roll_Zombie::Roll_Zombie():Zombie
-(global_roll_name,global_roll_aggress,global_roll_HP,global_roll_def,global_roll_EXP) {}
+(global_roll_name,global_roll_aggress,global_roll_HP,global_roll_def,global_roll_EXP, global_roll_money) {}
 
 void Roll_Zombie::attack(Player* p)
 {
     int num = rand() % 20 ;
     if (num < 15)  //特殊攻击概率为5/20 = 25%
     {
-        cout << getname() << "发动了攻击！" << endl;
+        cout << "\n" << getname() << "发动了攻击！" << endl;
         p->getdamage (getaggress()) ;
     }
     else  special_attack(p) ;
@@ -95,14 +103,14 @@ void Roll_Zombie::special_attack(Player *p)
 //water  zombie  -------------------------------------------
 
 Water_Zombie::Water_Zombie():Zombie
-(global_water_name,global_water_aggress,global_water_HP,global_water_def,global_water_EXP) {}
+(global_water_name,global_water_aggress,global_water_HP,global_water_def,global_water_EXP, global_water_money) {}
 
 void Water_Zombie::attack(Player* p)
 {
     int num = rand() % 20 ;
     if (num < 19)  //特殊概率为1/20 = 5%
     {
-        cout << getname() << "发动了攻击！" << endl;
+        cout << "\n" << getname() << "发动了攻击！" << endl;
         p->getdamage (getaggress()) ;
     }
     else  special_attack(p) ;

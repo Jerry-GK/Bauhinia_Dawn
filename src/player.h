@@ -38,9 +38,11 @@ private:
     Bag mybag;//背包
     Vehicle* cur_veh;//当前乘坐的交通工具（NULL表示双脚）
     Weapon* cur_wep;//当前的武器（NULL表示双手）
-    PLAYER_STAGE pl_status;//玩家状态
-    Position* pos;//玩家当前的位置
-    
+    PLAYER_STAGE pl_cur_status;//玩家状态
+    PLAYER_STAGE pl_last_status;//玩家上一个状态
+    Position* cur_pos;//玩家当前的位置
+    Position *last_pos;//玩家上一个位置（开始为NULL）
+
 public:
     Player();
     Player(const int getcurrentHP ,const int getMAXHP, const int getspeed 
@@ -64,8 +66,10 @@ public:
     Bag get_bag() const;
     void set_pos(Position* p);
     void set_status(PLAYER_STAGE s);
-    Position* get_pos();
-    PLAYER_STAGE get_status();
+    Position* get_cur_pos();
+    Position *get_last_pos();
+    PLAYER_STAGE get_cur_status();
+    PLAYER_STAGE get_last_status();
     void show_state();//显示玩家属性状态
 
     //map

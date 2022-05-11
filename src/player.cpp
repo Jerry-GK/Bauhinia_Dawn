@@ -17,8 +17,10 @@ Player::Player()
     }
     cur_veh = NULL ;
     cur_wep=NULL;
-    pl_status = UNKNOWN;
-    pos=NULL;
+    pl_cur_status = UNKNOWN;
+    pl_last_status = UNKNOWN;
+    cur_pos=NULL;
+    last_pos = NULL;
 }
 
 int Player::getAggress() const
@@ -105,7 +107,6 @@ void Player::get_off_vehicle()//下车 ，速度、移动能力 恢复成 $初始值$
 {
     if(cur_veh==NULL)
     {
-        cout<<"你现在没有乘坐交通工具！"<<endl;
         return;
     }
     speed = global_initial_speed ;
@@ -147,30 +148,43 @@ void Player::levelUP(int currentlevel)//升级
 
 void Player::change_money(const int m)
 {
+    cout << "你获得了￥" << m << endl;
     money = money + m;
 }
 //new:
 
 void Player::set_pos(Position* p)
 {
-    this->pos=p;
-    this->pl_status=p->get_status().front();
+    this->last_pos = this->cur_pos;
+    this->cur_pos=p;
+    this->pl_last_status = pl_cur_status;
+    this->pl_cur_status=p->get_status().front();
 }
 
 void Player::set_status(PLAYER_STAGE s)
 {
-    this->pl_status=s;
+    this->pl_cur_status=s;
 }
 
 
-Position* Player::get_pos()
+Position* Player::get_cur_pos()
 {
-    return this->pos;
+    return this->cur_pos;
 }
 
-PLAYER_STAGE Player::get_status()
+Position* Player::get_last_pos()
 {
-    return pl_status;
+    return this->last_pos;
+}
+
+PLAYER_STAGE Player::get_cur_status()
+{
+    return pl_cur_status;
+}
+
+PLAYER_STAGE Player::get_last_status()
+{
+    return pl_last_status;
 }
 
 void Player::show_state()//显示玩家属性状态
@@ -189,12 +203,12 @@ void Player::show_state()//显示玩家属性状态
     cout<<"移动速度："<<speed<<endl;
     cout<<"交通工具："<<str_veh<<endl;
     cout<<"当前武器："<<str_wep<<endl;
-    cout<<"当前位置："<<pos->get_name()<<endl;
+    cout<<"当前位置："<<cur_pos->get_name()<<endl;
 }
 
 void Player::showmap() const 
 {
-    cout << "当前位置是：" << pos->get_name () << "(" << pos->getX() <<  "," << pos->getY() << ")" << endl;
+    cout << "当前位置是：" << cur_pos->get_name () << "(" << cur_pos->getX() <<  "," << cur_pos->getY() << ")" << endl;
     cout << "Loading map, please wait..." << endl;
     system(global_map_open_cmd.c_str());
 }
@@ -216,17 +230,21 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
         Food *a = Food::new_food(item);
         a->show();
 
+        if(mode==BUY)
+        {
+            Bread *b = dynamic_cast<Bread *> (a);
+            if(getmoney()<b->getcost())
+            {
+                cout << "购买失败！所需花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                delete a;
+                return;
+            }
+        }
         if (mybag.add(item,a->getoccupancy() ) )
         {
-            if(a->getname()==global_bread_name && mode==BUY)
+            if(mode==BUY)
             {
                 Bread *b = dynamic_cast<Bread *> (a);
-                if(getmoney()<b->getcost())
-                {
-                    cout << "购买失败！所需花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
-                    delete a;
-                    return;
-                }
                 change_money(-b->getcost());
                 cout << "花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
             }
@@ -238,21 +256,25 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity() - mybag.getcurcapacity() ;
         }
         delete a;
+        return;
     }
     else if (Weapon::isWeapon (item))
     {
         Weapon *a = Weapon::new_wep(item);
         a->show();
-       if (mybag.add(item,a->getoccupancy() ) )
+        if(mode==BUY)
+        {
+            if(getmoney()<a->getcost())
+            {
+                cout << "购买失败！所需花费￥" << a->getcost() <<", 剩余￥"<<getmoney() << endl;
+                delete a;
+                return;
+            }
+        }
+        if (mybag.add(item,a->getoccupancy()))
         {
             if(mode==BUY)
             {
-                if(getmoney()<a->getcost())
-                {
-                    cout << "购买失败！所需花费￥" << a->getcost() <<", 剩余￥"<<getmoney() << endl;
-                    delete a;
-                    return;
-                }
                 change_money(-a->getcost());
                 cout << "花费￥" << a->getcost() <<", 剩余￥"<<getmoney() << endl;
             }
@@ -264,10 +286,12 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity()- mybag.getcurcapacity() ;
         }
         delete a;
+        return;
     }
     else
     {
         cout<<"无效指令：不存在该类物品！"<<endl;
+        return;
     }
 }
 
@@ -352,30 +376,34 @@ bool Player::move_to(Position* p)
         cout<<"不存在该地点！"<<endl;
         return false; 
     }
-    cout << "当前状态下前往" << p->get_name() << "需要消耗体力: " << get_HPcost(p) << "，是否确认前往？（输入 \"yes\" 确认）" << endl;
-    string ensure;
-    getline(cin, ensure);
-    if(ensure!="yes")
+    if(get_HPcost(p)!=0)
     {
-        cout << "你没有选择前往" << p->get_name() << endl;
-        return false;
+        cout << "当前状态下前往" << p->get_name() << "需要消耗体力: " << get_HPcost(p) << "，是否确认前往？（输入 \"yes\" 确认）" << endl;
+        string ensure;
+        getline(cin, ensure);
+        if(ensure!="yes")
+        {
+            cout << "你没有选择前往" << p->get_name() << endl;
+            return false;
+        }
+        if (getcurrentHP() < get_HPcost(p))
+        {
+            cout << "当前载具下，体力无法支撑你前往该地点！" << endl;
+            return false;
+        }
     }
-    if (getcurrentHP() < get_HPcost(p))
-    {
-        cout << "当前载具下，体力无法支撑你前往该地点！" << endl;
-        return false;
-    }
-    this->set_pos(p);
-    cout<<"来到："<<p->get_name()<<endl;
+
     //调用体力消耗函数
     this->currentHP -= get_HPcost(p);
+    cout<<"来到："<<p->get_name()<<", 消耗体力:"<<get_HPcost(p)<<", 当前体力:"<<getcurrentHP()<<endl;
+    this->set_pos(p);
     return true;
 }
 
 int Player::get_HPcost(Position *p)//得到当前位置去p的体力消耗值
 {
-    int distance = ( p->getX() - this->get_pos()->getX() )*( p->getX() - this->get_pos()->getX() )
-    + ( p->getY() - this->get_pos()->getY() ) * ( p->getY() - this->get_pos()->getY() ) ;
+    int distance = ( p->getX() - this->get_cur_pos()->getX() )*( p->getX() - this->get_cur_pos()->getX() )
+    + ( p->getY() - this->get_cur_pos()->getY() ) * ( p->getY() - this->get_cur_pos()->getY() ) ;
     distance = sqrt(distance) ;
     return distance * global_move_const / speed ;
 }
@@ -411,6 +439,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
             {
                 cout << "\n你克服困难,终于击败了丧尸！" << endl;
                 this->gainEXP(z->getEXP());
+                this->change_money(z->getmoney());//击败获得金钱
                 return 2;
             }
         }
@@ -449,9 +478,6 @@ int Player::fight_many(vector <Zombie*> v_zome )
     cout << "\n你当前状态：" << endl; 
     cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress 
          << "/" << this->getweaponaggress() << endl;
-
-
-
 
     while (1)
     {
@@ -494,6 +520,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
                     {
                         cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
                         this->gainEXP((*p)->getEXP());
+                        this->change_money((*p)->getmoney());
                         v_zome.erase(p);
                     }
                     break ;
@@ -513,6 +540,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
                         {
                             cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
                             this->gainEXP((*p)->getEXP());
+                            this->change_money((*p)->getmoney());
                             v_zome.erase(p);
                         }
                         break ;
@@ -537,6 +565,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
             {
                 cout << "\n你克服困难,终于击败了最后一只丧尸！" << endl;
                 this->gainEXP(v_zome[0]->getEXP());
+                this->change_money(v_zome[0]->getmoney());
                 return 2;
             }
         }
@@ -578,6 +607,7 @@ void Player::getdamage(const int damage)//被攻击
 void Player::attack(Weapon *a,Zombie *z)
 {
     cout  << "你发动了攻击！" << endl;
+    //_sleep((unsigned long)400);
     //rand(20) + aggress > def can dealt damage to zombie by your weapon + 1;
     if ( rand()*20 + aggress > z->getdef())
     {

@@ -13,10 +13,11 @@ private:
     int  HP;//血量
     int def;//防御
     int EXP;//被击败的经验值
+    int award_money; //击败后获得的钱
 
 public:
     Zombie();
-    Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP) ;
+    Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP, const int set_money) ;
     virtual void show();
     virtual void attack(Player* p);
     virtual ~Zombie();
@@ -25,6 +26,7 @@ public:
     int getEXP () const ;
     int getdef () const ;
     int getaggress() const ;
+    int getmoney() const ;
     string getname () const ;   
 };
 

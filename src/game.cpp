@@ -4,55 +4,56 @@ void Game::Init()
 {
     cout<<"»¶Ó­À´µ½¡¶×Ï¾£ÀèÃ÷¡·! (ÊäÈëbegin¿ªÊ¼ÓÎÏ·£¬ÓÎÏ·¹ý³ÌÖÐ½¨ÒéÊäÈëhelp²é¿´Ö¸ÁîËµÃ÷£¬¿ÉÊäÈëhint²é¿´ÌáÊ¾)"<<endl;
     this->stage=NOT_BEGIN;
-    //init positions in game map
+    //Ö÷ÏßµØµã³õÊ¼»¯
     Position p;
     input_box.clear();
     msg.clear();
     partner_alive = true;
     enemy_alive = true;
+
     p.set("dormitory",20,120);//ËÞÉá
     p.add_status(DOR_TO_LOOK_OUTSIDE);
-    //
     game_map.add_pos(p);
     
     p.set("shop",22,115);//³¬ÊÐ
     p.add_status(SHOP_SEARCH);
-    //
     game_map.add_pos(p);
 
     p.set("dor gate",15,115);//ËÞÉáÃÅ¿Ú
     p.add_status(GATE_FIGHT);
-    //
     game_map.add_pos(p);
 
     p.set("west building",20,50);//Î÷½Ì
     p.add_status(WEST_INTO_BUILDING);
-    //
     game_map.add_pos(p);
 
     p.set("bio lab",70,10);//ÉúÎïÊµÑéÊÒ
     p.add_status(BIO_INTO_BUILDING);
-    //
     game_map.add_pos(p);
     
     p.set("roof",25,65);//Ô­¹ÜÔºÂ¥¶¥
     p.add_status(ROOF_HALL);
-    //
     game_map.add_pos(p);
 
     p.set("wharf",35,75);//Ë®ÉÏÂëÍ·
     p.add_status(WHARF_DECIDE);
-    //
     game_map.add_pos(p);
 
     p.set("lake",35,75);//ÆôÕæºþ
     p.add_status(LAKE_ROW);
-    //
     game_map.add_pos(p);
 
     p.set("south gate",0,0);//ÄÏÃÅ³ö¿Ú
     p.add_status(SOUTH_END);
-    //
+    game_map.add_pos(p);
+
+    //Ö§ÏßµØµã³õÊ¼»¯
+    p.set("east building", 50, 50);//¶«½Ì£¨Ë¢¹Ö¿ß£©
+    p.add_status(EAST_BUILDING);
+    game_map.add_pos(p);
+
+    p.set("library", 40, 5);//Ò½Ñ§Í¼Êé¹Ý£¨ÎäÆ÷¿â£©
+    p.add_status(LIBRARY);
     game_map.add_pos(p);
 
     //init player
@@ -66,9 +67,14 @@ void Game::read()
     submit();
 }
 
-void Game::submit()//´Ó¶Ô»°¿ò¶ÁÈ¡Íæ¼ÒÊäÈëµÄÎÄ±¾£¨input_box->msg, clear input_box, call process£©
+void Game::submit()//´Ó¶Ô»°¿ò¶ÁÈ¡Íæ¼ÒÊäÈëµÄÎÄ±¾,´¦ÀíÎÄ±¾£¨input_box->msg, clear input_box, call process£©
 {
     msg=input_box;
+    //¹æ·¶»¯msg
+    transform(msg.begin(), msg.end(), msg.begin(), ::tolower);//×ª³ÉÐ¡Ð´
+    msg.erase(0,msg.find_first_not_of(" "));//É¾³ýÍ·²¿¿Õ¸ñ
+    msg.erase(msg.find_last_not_of(" ") + 1);//É¾³ýÎ²²¿¿Õ¸ñ
+
     input_box.clear();
     process(msg);
 }
@@ -134,9 +140,36 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         this->pl.get_off_vehicle();
         return;
     }
+    else if(msg=="goto east building")//Ç°Íù¶«½ÌÑ§Â¥£¨É¥Ê¬¿ß£©
+    {
+        if(pl.get_cur_pos()->get_name()=="dormitory"||pl.get_cur_pos()->get_name()=="lake"||pl.get_cur_pos()->get_name()=="roof")
+        {
+            cout << "µ±Ç°Î»ÖÃÎÞ·¨Ö±½ÓÇ°Íù¶«½ÌÑ§Â¥£¡" << endl;
+            return;
+        }
+        if(!pl.move_to(game_map.get_pos("east building")))
+            return;
+        pl.get_off_vehicle();
+        cout << "ÄãÀ´µ½ÁË¶«½Ì¡£" << endl;
+        return;
+    }
+    else if(msg=="goto library")
+    {
+        if(pl.get_cur_pos()->get_name()=="dormitory"||pl.get_cur_pos()->get_name()=="lake"||pl.get_cur_pos()->get_name()=="roof")
+        {
+            cout << "µ±Ç°Î»ÖÃÎÞ·¨Ö±½ÓÇ°ÍùÒ½Ñ§Í¼Êé¹Ý£¡" << endl;
+            return;
+        }
+        if(!pl.move_to(game_map.get_pos("library")))
+            return;
+        pl.get_off_vehicle();
+        cout << "ÄãÀ´µ½ÁËÒ½Ñ§Í¼Êé¹Ý¡£" << endl;
+        return;
+    }
     else if((msg.find("sudo goto")==0)&&msg.length()>=11)
     {
         this->pl.move_to(game_map.get_pos(msg.substr(10, msg.length()-10)));
+        pl.get_off_vehicle();
         return;
     }
     else if((msg.find("sudo pick")==0)&&msg.length()>=11)
@@ -150,10 +183,16 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
         this->pl.take_vehicle(v);
         return;
     }
-    //·ÇÈÎºÎ³¡¾°Ö®ÏÂ¶¼¿ÉÖ´ÐÐµÄÖ¸Áî
-    else if(pl.get_pos()->get_name()=="dormitory")//Scene 1: Dormitory
+    else if(msg=="sudo recover")
     {
-        if(pl.get_status()==DOR_TO_LOOK_OUTSIDE)
+        this->pl.changeHP(pl.getMAXHP() - pl.getcurrentHP());
+        cout << "ÒÑ»Ø¸´ÖÁ×î´óÌåÁ¦£¡" << endl;
+        return;
+    }
+    //·ÇÈÎºÎ³¡¾°Ö®ÏÂ¶¼¿ÉÖ´ÐÐµÄÖ¸Áî
+    else if(pl.get_cur_pos()->get_name()=="dormitory")//Scene 1: Dormitory
+    {
+        if(pl.get_cur_status()==DOR_TO_LOOK_OUTSIDE)
         {
             if(msg=="look")
             {
@@ -169,7 +208,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==DOR_TO_CHOOSE)
+        else if(pl.get_cur_status()==DOR_TO_CHOOSE)
         {
             if(msg=="look")
             {
@@ -191,6 +230,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             {
                 if(!pl.move_to(game_map.get_pos("shop")))
                     return;
+                pl.get_off_vehicle();
                 cout << "Äã´ÓËÞÉá³öÀ´£¬¶ã×ÅÉ¥Ê¬µÄÊÓÏß£¬Ò»Â·Ð¡ÅÜÀ´µ½ÁËÑ§Ô°ÃÅÇ°µÄÆôÕæ½ÌÓý³¬ÊÐ" << endl;
                 return;
             }
@@ -202,9 +242,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="shop")//Scene 2: shop
+    else if(pl.get_cur_pos()->get_name()=="shop")//Scene 2: shop
     {
-        if(pl.get_status()==SHOP_SEARCH)
+        if(pl.get_cur_status()==SHOP_SEARCH)
         {
             if(msg=="look")
             {
@@ -231,6 +271,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             {
                 if(!pl.move_to(game_map.get_pos("dor gate")))
                     return;
+                pl.get_off_vehicle();
                 cout << "ÄãÀë¿ª³¬ÊÐ£¬ÇÄÇÄÀ´µ½ÃÅ¿Ú£¬¿ÉÊÇ»¹ÊÇ±»É¥Ê¬·¢ÏÖÁË£¬Ò»Ö»É¥Ê¬ÏòÄãÆËÀ´..."<<endl;
                 return;
             }
@@ -244,11 +285,11 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="dor gate")//Scene 3: Gate of the dormitory, beside the road
+    else if(pl.get_cur_pos()->get_name()=="dor gate")//Scene 3: Gate of the dormitory, beside the road
     {
         Zombie* z;
         z=new Zombie;
-        if(pl.get_status()==GATE_FIGHT)
+        if(pl.get_cur_status()==GATE_FIGHT)
         {
             if(msg=="look")
             {
@@ -290,7 +331,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        if(pl.get_status()==GATE_AFTER_FIGHT)
+        if(pl.get_cur_status()==GATE_AFTER_FIGHT)
         {
             if(msg=="look")
             {
@@ -330,9 +371,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="west building")//Scene 4: West teaching building
+    else if(pl.get_cur_pos()->get_name()=="west building")//Scene 4: West teaching building
     {
-        if(pl.get_status()==WEST_INTO_BUILDING)
+        if(pl.get_cur_status()==WEST_INTO_BUILDING)
         {
             if(msg=="look")
             {
@@ -357,7 +398,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==WEST_MEET)
+        else if(pl.get_cur_status()==WEST_MEET)
         {
             if(msg=="look")
             {
@@ -390,7 +431,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==WEST_FIGHT)
+        else if(pl.get_cur_status()==WEST_FIGHT)
         {
             Zombie* z=new Roll_Zombie;
             if(msg=="look")
@@ -430,7 +471,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==WEST_CHECK)
+        else if(pl.get_cur_status()==WEST_CHECK)
         {
             if(msg=="look")
             {
@@ -474,9 +515,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="bio lab")//Scene 5: Biology laboratory
+    else if(pl.get_cur_pos()->get_name()=="bio lab")//Scene 5: Biology laboratory
     {
-        if(pl.get_status()==BIO_INTO_BUILDING)
+        if(pl.get_cur_status()==BIO_INTO_BUILDING)
         {
             if(msg=="look")
             {
@@ -496,7 +537,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==BIO_MEET)
+        else if(pl.get_cur_status()==BIO_MEET)
         {
             if(msg=="look")
             {
@@ -538,7 +579,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==BIO_LEAVE)
+        else if(pl.get_cur_status()==BIO_LEAVE)
         {
             if(msg=="look")
             {
@@ -578,9 +619,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="roof")//Scene 6: The roof of the old management college
+    else if(pl.get_cur_pos()->get_name()=="roof")//Scene 6: The roof of the old management college
     {
-        if(pl.get_status()==ROOF_HALL)
+        if(pl.get_cur_status()==ROOF_HALL)
         {
             if(msg=="look")
             {
@@ -606,7 +647,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==ROOF_TOP)
+        else if(pl.get_cur_status()==ROOF_TOP)
         {
             if(msg=="look")
             {
@@ -631,7 +672,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==ROOF_LEAVE)
+        else if(pl.get_cur_status()==ROOF_LEAVE)
         {
             vector<Zombie*> v_zom;
             Zombie *z1 = new Zombie;
@@ -712,7 +753,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==ROOF_SUC)
+        else if(pl.get_cur_status()==ROOF_SUC)
         {
             if(msg=="look")
             {
@@ -738,7 +779,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==ROOF_TO_WHARF)
+        else if(pl.get_cur_status()==ROOF_TO_WHARF)
         {
             if(msg=="look")
             {
@@ -789,9 +830,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="wharf")
+    else if(pl.get_cur_pos()->get_name()=="wharf")
     {
-        if(pl.get_status()==WHARF_DECIDE)
+        if(pl.get_cur_status()==WHARF_DECIDE)
         {
             if(msg=="look")
             {
@@ -832,9 +873,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="lake")
+    else if(pl.get_cur_pos()->get_name()=="lake")
     {
-        if(pl.get_status()==LAKE_ROW)
+        if(pl.get_cur_status()==LAKE_ROW)
         {
             if(msg=="look")
             {
@@ -858,7 +899,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==LAKE_FIGHT)
+        else if(pl.get_cur_status()==LAKE_FIGHT)
         {
             Zombie* z=new Water_Zombie;
             if(msg=="look")
@@ -900,7 +941,7 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 return;
             }
         }
-        else if(pl.get_status()==LAKE_SAVE)
+        else if(pl.get_cur_status()==LAKE_SAVE)
         {
             if(msg=="look")
             {
@@ -971,9 +1012,9 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
             }
         }
     }
-    else if(pl.get_pos()->get_name()=="south gate")
+    else if(pl.get_cur_pos()->get_name()=="south gate")
     {
-        if(pl.get_status()==SOUTH_END)
+        if(pl.get_cur_status()==SOUTH_END)
         {
             if(msg=="look")
             {
@@ -1021,6 +1062,102 @@ void Game::process(string msg)//¸ù¾Ýpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾ÝµØµã£¬»®·
                 cout<<"look: ²é¿´ÖÜ±ßÇé¿ö\nashore: Ö±½ÓÉÏ°¶\nsing: ³ª¸è¸øÎä¾¯ÃÇÌý"<<endl;
                 return;
             }
+        }
+    }
+    //Ö§ÏßµØµã£¨ÁÙÊ±£©
+    else if(pl.get_cur_pos()->get_name()=="east building")//¶«½Ì£¬É¥Ê¬¿ß
+    {
+        if(msg=="look")
+        {
+            cout<<"ÕâÀïÊÇ¶«½Ì£¬Ô­±¾ÊÇÑ§Ï°µÄÌìÌÃ£¬ÏÖÔÚÈ´³ÉÁËÉ¥Ê¬¿ß£¬µ½´¦¶¼ÊÇÇîÐ×¼«¶ñµÄÉ¥Ê¬£¬ÍðÈçÈË¼äµØÓü¡£"
+                  "µ«ÊÇ¸»¹óÏÕÖÐÇó£¬¶ÔÄãÀ´ËµÉ¥Ê¬ÒâÎ¶×ÅÎ£ÏÕ£¬µ«ÊÇ»÷°ÜËûÃÇÒ²ÒâÎ¶×ÅÕ½¶·¾­ÑéµÄÌáÉý£¬¶øÇÒËµ²»¶¨ÄÜ´ÓËûÃÇÉíÉÏËÑ³öÇ®À´£¬¹ºÂòÎï×Ê¡£"
+                  "Äã¾ö¶¨ÄÃºÃÎäÆ÷£¬µ÷ÕûºÃ×´Ì¬£¬»÷°ÜÉ¥Ê¬£¡"<<endl;
+            return;
+        }
+        else if(msg=="fight")
+        {
+            Zombie *z;
+            //Ëæ»úÉú³ÉÉ¥Ê¬
+            int res = rand() % 3;
+            if(res==0)
+                z = new Zombie;
+            else if(res==1)
+                z = new Roll_Zombie;
+            else if(res==2)
+                z = new Water_Zombie;
+
+            cout << "Õâ´Î³öÏÖµÄÊÇ" << z->getname() << " !" << endl;
+            switch(pl.fight(z))
+            {
+                case 0:
+                    this->stage=DIE;
+                    break;
+                case 1: 
+                    cout<<"Äã¸Ï½ôÌÓ»ØÁË¶«½ÌÃÅ¿Ú"<<endl;
+                    delete z;
+                    break;
+                case 2:
+                    //³É¹¦´ò°ÜÉ¥Ê¬
+                    break;
+                    delete z;
+            }
+            return;
+        }
+        else if(msg=="return")
+        {
+            PLAYER_STAGE temp = pl.get_last_status();
+            pl.move_to(pl.get_last_pos());
+            pl.get_off_vehicle();
+            pl.set_status(temp);
+            return;
+        }
+        else if(msg=="hint")
+        {
+            cout << "look: ¹Û²ì¶«½ÌÑ§Çé¿ö\nfight: Ëæ»úÕÒµ½Ò»Ö»É¥Ê¬²¢ÓëÖ®×÷Õ½\nreturn: ´ÓÄÄÀ´»ØÄÄÈ¥" << endl;
+            return;
+        }
+    }
+    else if(pl.get_cur_pos()->get_name()=="library")//Ò½Ñ§Í¼Êé¹Ý£¬ÎäÆ÷¿â
+    {
+        if(msg=="look")
+        {
+            cout << "ÕâÀïÔ­±¾ÊÇÍ¼Êé¹Ý£¬É¥Ê¬²¡¶¾±¬·¢ºó±ä³ÉÁËÃØÃÜÎäÆ÷¿â£¬°Ú·Å×Å¸÷ÖÖ¸÷ÑùµÄÎäÆ÷£¬ÐèÒª»¨Ç®¹ºÂò£º" << endl;
+            Fork f;
+            f.show();
+            cout << endl;
+            Umbrella um;
+            um.show();
+            cout << endl;
+            Knife kn;
+            kn.show();
+            cout << endl;
+            Gun gun;
+            gun.show();
+            return;
+        }
+        else if((msg.find("pick")==0)&&msg.length()>=6)
+        {
+            string item = msg.substr(5, msg.length() - 5);
+            if(!(item==global_fork_name||item==global_knife_name||item==global_umbrella_name||item==global_gun_name))
+            {
+                cout << "ÎÞ·¨ÔÚÕâÀï¹ºÂò´ËÎïÆ·£¡" << endl;
+                return;
+            }
+            this->pl.pick(item, BUY);
+            return;
+        }
+        else if(msg=="return")
+        {
+            PLAYER_STAGE temp = pl.get_last_status();
+            pl.move_to(pl.get_last_pos());
+            pl.get_off_vehicle();
+            pl.set_status(temp);
+            return;
+        }
+        else if(msg=="hint")
+        {
+            cout << "look: ¹Û²ìÍ¼Êé¹ÝÎäÆ÷¿âÇé¿ö\npick <ÎäÆ÷Ó¢ÎÄÃû>: ¹ºÂòÄ³ÖÖÎäÆ÷\nreturn: ´ÓÄÄÀ´»ØÄÄÈ¥" << endl;
+            return;
         }
     }
     cout << "ÊäÈëµÄÖ¸ÁîÎÞÐ§£¡(¿ÉÊäÈëhelp²é¿´Ò»°ãºÏ·¨Ö¸Áî, ÊäÈëhint²é¿´µ±Ç°²Ù×÷ÌáÊ¾)" << endl; //ÒÔÉÏÌõ¼þ¾ù²»Âú×ãÊ±£¬ÅÐ¶¨ÊäÈëµÄÎª·Ç·¨Ö¸Áî
