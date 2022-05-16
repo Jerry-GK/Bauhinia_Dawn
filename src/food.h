@@ -26,7 +26,7 @@ private:
     int effect;
     int cost;
 public:
-    Bread(int seteffect, int cost);
+    Bread();
     int geteffect() const;
     int getcost() const;
     void show() const;
@@ -38,7 +38,7 @@ private:
     int effect;
     int cost;
 public:
-    Apple(int seteffect, int setcost);
+    Apple();
     int geteffect() const;
     int getcost() const;
     void show() const;

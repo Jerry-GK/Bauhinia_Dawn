@@ -76,11 +76,11 @@ Food* Food::new_food(string name)
     Food *ret = NULL;
     if(name==global_bread_name)
     {
-        ret = new Bread(global_bread_effect, global_bread_cost);
+        ret = new Bread;
     }
     else if(name==global_apple_name)
     {
-        ret = new Apple(global_apple_effect, global_apple_cost);
+        ret = new Apple;
     }
     else if(name==global_redtube_name)
     {
@@ -93,7 +93,7 @@ Food* Food::new_food(string name)
     return ret;
 }
 
-Bread::Bread(int seteffect, int setcost) : Food(global_bread_name, global_bread_occupancy) { effect = seteffect; cost=setcost;};
-Apple::Apple(int seteffect, int setcost) : Food(global_apple_name, global_apple_occupancy) { effect = seteffect; cost = setcost;};
+Bread::Bread() : Food(global_bread_name, global_bread_occupancy) { effect = global_bread_effect; cost=global_bread_cost;};
+Apple::Apple() : Food(global_apple_name, global_apple_occupancy) { effect = global_apple_effect; cost=global_apple_cost;};
 RedTube::RedTube() : Food(global_redtube_name, global_redtube_occupancy){};
 GreenTube::GreenTube() : Food(global_greentube_name, global_greentube_occupancy){};

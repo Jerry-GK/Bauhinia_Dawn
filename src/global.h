@@ -4,23 +4,7 @@
 using namespace std;
 
 extern const string info_help;
-
-extern const string info_welcome;
-extern const string info_invalid;
-extern const string info_bye;
-extern const string info_wake_up;
-extern const string info_look_outside;
-
-extern const string info_look_around;
-
-extern const string info_to_shop;
-extern const string info_look_shop;
-
-extern const string info_saleman;
-extern const string info_to_gate;
-
-extern const string info_fight_suc;
-extern const string info_goto_west;
+extern const string info_end;
 
 //角色：
 extern const string global_player_name;
@@ -38,18 +22,22 @@ extern const string global_fork_name;
 extern const int global_fork_attack;
 extern const int global_fork_occupancy;
 extern const int global_fork_cost;
+extern const int global_fork_chance;
 extern const string global_knife_name;
 extern const int global_knife_attack;
 extern const int global_knife_occupancy;
 extern const int global_knife_cost;
+extern const int global_knife_chance;
 extern const string global_umbrella_name;
 extern const int global_umbrella_attack;
 extern const int global_umbrella_occupancy;
 extern const int global_umbrella_cost;
+extern const int global_umbrella_chance;
 extern const string global_gun_name;
 extern const int global_gun_attack;
 extern const int global_gun_occupancy;
 extern const int global_gun_cost;
+extern const int global_gun_chance;
 
 //载具
 extern const string global_bike_name;
@@ -86,18 +74,21 @@ extern const int global_ordinary_HP;
 extern const int global_ordinary_def;
 extern const int global_ordinary_EXP;
 extern const int global_ordinary_money;
+extern const int global_ordinary_chance;
 extern const string global_roll_name;
 extern const int global_roll_aggress;
 extern const int global_roll_HP;
 extern const int global_roll_def;
 extern const int global_roll_EXP;
 extern const int global_roll_money;
+extern const int global_roll_chance;
 extern const string global_water_name;
 extern const int global_water_aggress;
 extern const int global_water_HP;
 extern const int global_water_def;
 extern const int global_water_EXP;
 extern const int global_water_money;
+extern const int global_water_chance;
 
 //游戏
 extern const int global_jump_damage;
@@ -160,8 +151,9 @@ enum PLAYER_STAGE
     LIBRARY
 };
 
-enum PICK_MODE //普通捡起或购买
+enum PICK_MODE //普通捡起,购买,或sudo拾取
 {
     PICK,
-    BUY
+    BUY,
+    SUDO
 };

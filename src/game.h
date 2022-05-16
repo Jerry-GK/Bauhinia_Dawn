@@ -27,5 +27,6 @@ public:
     void process(string msg);//根据游戏、玩家状态以及输入信息，做出信息反馈（游戏最重要的逻辑部分）
  
     bool is_end() const;//判断游戏是否已经到了结局
+    bool is_quit() const;//判断游戏是否已经退出
     void quit();//退出游戏
 };

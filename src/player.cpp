@@ -148,7 +148,8 @@ void Player::levelUP(int currentlevel)//升级
 
 void Player::change_money(const int m)
 {
-    cout << "你获得了￥" << m << endl;
+    string str = m >= 0 ? "获得" : "花费";
+    cout << "你"<<str<<"了￥" << m << endl;
     money = money + m;
 }
 //new:
@@ -196,7 +197,7 @@ void Player::show_state()//显示玩家属性状态
     cout<<"等级："<<level<<endl;
     if (level != 10 ) {cout<<"经验："<<currentEXP<<"  升级需要："<<needEXP[level-1] << endl;}
     else {cout << "你已经达到了最高等级： level 10 !" << endl;} //这里存在 满级时数组越界的bug 需要判断是否满级
-    cout<<"攻击力："<<aggress<<endl;
+    cout<<"玩家攻击力："<<aggress<<endl;
     cout<<"武器攻击力："<<this->getweaponaggress()<<endl;
     cout<<"当前体力/最大体力： "<<currentHP<<"/"<<MAXHP<<endl;
     cout << "现金数量：￥" << money << endl;
@@ -232,23 +233,52 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
 
         if(mode==BUY)
         {
-            Bread *b = dynamic_cast<Bread *> (a);
-            if(getmoney()<b->getcost())
+            if(a->getname()==global_bread_name)
             {
-                cout << "购买失败！所需花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
-                delete a;
-                return;
+                Bread *b = dynamic_cast<Bread *> (a);
+                if(getmoney()<b->getcost())
+                {
+                    cout << "购买失败！所需花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                    delete a;
+                    return;
+                }
+            }
+            else if(a->getname()==global_apple_name)
+            {
+                Apple *b = dynamic_cast<Apple *> (a);
+                if(getmoney()<b->getcost())
+                {
+                    cout << "购买失败！所需花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                    delete a;
+                    return;
+                }
             }
         }
         if (mybag.add(item,a->getoccupancy() ) )
         {
             if(mode==BUY)
             {
-                Bread *b = dynamic_cast<Bread *> (a);
-                change_money(-b->getcost());
-                cout << "花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                if(a->getname()==global_bread_name)
+                {
+                    Bread *b = dynamic_cast<Bread *> (a);
+                    change_money(-b->getcost());
+                    cout << "花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                }
+                else if(a->getname()==global_apple_name)
+                {
+                    Apple *b = dynamic_cast<Apple *> (a);
+                    change_money(-b->getcost());
+                    cout << "花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
+                }
             }
-            cout << "拾取/购买了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
+            string pick_str;
+            if(mode==PICK)
+                pick_str = "拾取";
+            else if(mode==BUY)
+                pick_str = "购买";
+            else if(mode==SUDO)
+                pick_str = "强制获得";
+            cout << pick_str <<"了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
         }
         else
         {
@@ -434,7 +464,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
         }
         else if (msg == "hit")
         {
-            attack(cur_wep,z) ;
+            attack(z) ;
             if (! z->getHP()) //打败了僵尸
             {
                 cout << "\n你克服困难,终于击败了丧尸！" << endl;
@@ -515,7 +545,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
             {
                 if (i == choose)
                 {
-                    attack(cur_wep,*p) ;
+                    attack(*p) ;
                     if ( (*p) ->getHP() == 0) //杀死了这个丧尸
                     {
                         cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
@@ -535,7 +565,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
                 {
                     if (i == choose)
                     {
-                        attack(cur_wep,*p) ;
+                        attack(*p) ;
                         if ( (*p) ->getHP() == 0) //杀死了这个丧尸
                         {
                             cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
@@ -560,7 +590,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
 
         else if (msg == "hit" && v_zome.size() == 1)
         {
-            attack(cur_wep,v_zome[0]) ;
+            attack(v_zome[0]) ;
             if (!v_zome[0]->getHP()) //打败了僵尸
             {
                 cout << "\n你克服困难,终于击败了最后一只丧尸！" << endl;
@@ -604,18 +634,20 @@ void Player::getdamage(const int damage)//被攻击
     cout << "你受到了 " << damage << "点伤害 , 当前体力为： " << currentHP << endl; 
 }
 
-void Player::attack(Weapon *a,Zombie *z)
+void Player::attack(Zombie *z)
 {
     cout  << "你发动了攻击！" << endl;
-    //_sleep((unsigned long)400);
     //rand(20) + aggress > def can dealt damage to zombie by your weapon + 1;
-    if ( rand()*20 + aggress > z->getdef())
+    int damage = rand()%20 + aggress - z->getdef();
+    if ( damage>0 ) 
     {
-        z->getdamage (aggress*0.3+this->getweaponaggress() + 1) ;
+        if(cur_wep!=NULL)
+            damage += cur_wep->wep_attack(z);
+        z->getdamage(damage);
     }
     else 
     {
-        cout << "你未能击穿丧尸的护甲 , 不要放弃尝试！" << endl;
+        cout << "你自身攻击力不足，未能击穿丧尸的护甲 , 不要放弃尝试！" << endl;
     }
 
 }

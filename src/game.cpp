@@ -52,7 +52,7 @@ void Game::Init()
     p.add_status(EAST_BUILDING);
     game_map.add_pos(p);
 
-    p.set("library", 40, 5);//Ò½Ñ§Í¼Êé¹İ£¨ÎäÆ÷¿â£©
+    p.set("library", 40, 5);//Ò½Ñ§Í¼Êé¹İ£¨Îï×Ê¿â£©
     p.add_status(LIBRARY);
     game_map.add_pos(p);
 
@@ -83,6 +83,30 @@ void Game::submit()//´Ó¶Ô»°¿ò¶ÁÈ¡Íæ¼ÒÊäÈëµÄÎÄ±¾,´¦ÀíÎÄ±¾£¨input_box->msg, clear 
 void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·Ö³öĞ¡×´Ì¬
 {
     //½øÈëÓÎÏ·
+    if(is_end())//ÓÎÏ·ÒÑ¾­½áÊø£¬¾ö¶¨ÊÇ·ñÖØÀ´
+    {
+        if(msg=="roll back")
+        {
+            cout << "\nµ±Ç°ÉĞÎ´ÏëºÃÈçºÎÊµÏÖ»Øµµ!" << endl;
+            return;
+        }
+        else if(msg=="remake")
+        {
+            Init();
+            return;
+        }
+        else if(msg=="quit")
+        {
+            this->stage=QUIT;
+            return;
+        }
+        else
+        {
+            cout << "Çë°´ÌáÊ¾½øĞĞÑ¡Ôñ£¡" << endl;
+            cout << info_end << endl;
+            return;
+        }
+    }
     if(msg=="quit")
     {
         this->stage=QUIT;
@@ -174,7 +198,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
     }
     else if((msg.find("sudo pick")==0)&&msg.length()>=11)
     {
-        this->pl.pick(msg.substr(10, msg.length()-10), PICK);
+        this->pl.pick(msg.substr(10, msg.length()-10), SUDO);
         return;
     }
     else if((msg.find("sudo take")==0)&&msg.length()>=11)
@@ -310,6 +334,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                 {
                     case 0:
                         this->stage=DIE;
+                        cout << info_end << endl;
                         break;
                     case 1: 
                         pl.set_pos(game_map.get_pos("shop"));
@@ -446,6 +471,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                 {
                     case 0:
                         this->stage=DIE;
+                        cout << info_end << endl;
                         break;
                     case 1: 
                         pl.set_status(WEST_MEET);
@@ -716,6 +742,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                 {
                     cout << "ÄãË¤ËÀÁË£¡" << endl;
                     this->stage = DIE;
+                    cout << info_end << endl;
                     return;
                 }
                 pl.set_pos(game_map.get_pos("wharf"));
@@ -732,6 +759,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                 {
                     case 0:
                         this->stage = DIE;
+                        cout << info_end << endl;
                         break;
                     case 1:
                         cout << "ÄãÃÇ·¢¾õ´ò²»¹ıÕâÃ´¶àÉ¥Ê¬£¬ÀÇ±·µØÌÓÁË»ØÈ¥" << endl;
@@ -921,6 +949,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                 {
                     case 0:
                         this->stage=DIE;
+                        cout << info_end << endl;
                         break;
                     case 1: 
                         pl.set_pos(game_map.get_pos("wharf"));
@@ -991,6 +1020,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                         "Ò²ÕıÒòÈç´ËËûÃÇ×ìÀï²ÅÈ«ÉíÊÇÂÌÉ«¡£¿ÉÊÇÒ»ÇĞ¶¼ÒÑ¾­ÍíÁË£¬Ğ¡ÓïË²¼ä±ä³ÉÁË¿ÉÅÂµÄÉ¥Ê¬£¬Ò»¿Ú°ÑÄãÒ§×¡£¬ÄãÒ²±ä³ÉÁËÉ¥Ê¬¡£ÀèÃ÷£¬²»ÊôÓÚÄãÃÇ"<<endl;
                 partner_alive = false;
                 this->stage=DIE;
+                cout << info_end << endl;
                 return;
             }
             else if(msg=="goto south gate")
@@ -1000,6 +1030,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                         "Ğ¡ÓïÕıÒ§×ÅÄãµÄ¼ç°ò£¬ÉË¿ÚÉø³öÂÌÉ«µÄÒºÌå¡£ËıµÄÑÛ¾¦ÒÑ¾­ÍêÈ«»ë×ÇÁË£¬µ«ÁôÏÂÁËÒ»µÎÀá£¬ÄãÌıµ½ËıÇáÉùËµ£º¶Ô£¬¶Ô²»Æğ..."
                         "ÄãµÄÊÓÏß¿ªÊ¼Ä£ºı£¬ËÄÖ«Öğ½¥ÎŞÁ¦£¬×îÖÕ£¬Ò²µ¹ÔÚÁË´¬ÉÏ£¬±ä³ÉÁËÉ¥Ê¬...ÀèÃ÷£¬²»ÊôÓÚÄãÃÇ";
                 this->stage=DIE;
+                cout << info_end << endl;
                 return;
             }
             //use red/green tubeÔÚÈ«¾ÖÓĞ
@@ -1032,6 +1063,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                 pl.get_off_vehicle();
                 cout<<"Îä¾¯¼û»ëÉíÊÇÑªµÄÄã´òËãÉÏ°¶£¬Ã»ÓĞ°ì·¨£¬¿Û¶¯ÁË°â»ú£¬Äã±»»÷É±ÁË¡££¨Ã»ÓĞ¿´¹ı¸ªÉ½ĞĞÂğ£¿£©"<<endl;
                 this->stage=DIE;
+                cout << info_end << endl;
                 return;
             }
             else if(msg=="sing")
@@ -1047,6 +1079,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                             "Èç¹û£¬Èç¹û×Ô¼ºÄÜÔÚºÍÉ¥Ê¬µÄÕ½¶·ÖĞ±£»¤ºÃĞ¡Óï£¬ÄÄÅÂÄÜÄÃ×ß½âÒ©¡¢ÄÜÑ¡¶ÔÒ©£¬Ğ¡ÓïÒ²²»»áÔÚºşµ×³¤Ãß¡£"
                             "¿ÉÊÇ£¬Ã»ÓĞÄÇÃ´¶àÈç¹û£¬×îÖÕÖ»ÓĞÄãÒ»ÈËÌÓ³öÀ´£¬ÄãÓ­À´ÁË×Ï¾£µÄÀèÃ÷£¬¶øËı£¬È´³ÁË¯ÔÚÁËÓÀºãµÄºÚÒ¹..."<<endl;
                     this->stage=ALONE_SUC;
+                    cout << info_end << endl;
                     return;
                 }
                 else//Ò»ÆğÌÓ³öÈ¥£¨×î¼Ñ½á¾Ö£©
@@ -1054,6 +1087,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
                     cout<<"Äã×ªÍ·ÍûÏòĞ¡Óï£¬Ëı¾²¾²µØ×ø×Å£¬Ò²¿´ÏòÄã£ºËµµÀ£ºÎÒÃÇ×ÜËãÌÓ³öÀ´ÁË£¬²»ÊÇÂğ£¿ÄãĞ¦ÁË£¬ËıÒ²Ğ¦ÁË¡£"
                             "»òĞí£¬Õâ¾ÍÊÇÄãÃÇµÄ×Ï¾£ÀèÃ÷¡£"<<endl;
                     this->stage=SUC;
+                    cout << info_end << endl;
                     return;
                 }
             }
@@ -1091,6 +1125,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             {
                 case 0:
                     this->stage=DIE;
+                    cout << info_end << endl;
                     break;
                 case 1: 
                     cout<<"Äã¸Ï½ôÌÓ»ØÁË¶«½ÌÃÅ¿Ú"<<endl;
@@ -1117,11 +1152,19 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             return;
         }
     }
-    else if(pl.get_cur_pos()->get_name()=="library")//Ò½Ñ§Í¼Êé¹İ£¬ÎäÆ÷¿â
+    else if(pl.get_cur_pos()->get_name()=="library")//Ò½Ñ§Í¼Êé¹İ£¬Îï×Ê¿â
     {
         if(msg=="look")
         {
-            cout << "ÕâÀïÔ­±¾ÊÇÍ¼Êé¹İ£¬É¥Ê¬²¡¶¾±¬·¢ºó±ä³ÉÁËÃØÃÜÎäÆ÷¿â£¬°Ú·Å×Å¸÷ÖÖ¸÷ÑùµÄÎäÆ÷£¬ĞèÒª»¨Ç®¹ºÂò£º" << endl;
+            cout << "ÕâÀïÔ­±¾ÊÇÍ¼Êé¹İ£¬É¥Ê¬²¡¶¾±¬·¢ºó±ä³ÉÁËÃØÃÜÎï×Ê¿â£¬°Ú·Å×Å¸÷ÖÖ¸÷ÑùµÄÎäÆ÷ºÍÊ³Îï£¬ĞèÒª»¨Ç®¹ºÂò£º" << endl;
+            cout << "-------------Ê³ÎïÀ¸-------------" << endl;
+            Bread b;
+            b.show();
+            cout << endl;
+            Apple a;
+            a.show();
+            cout << endl;
+            cout << "-------------ÎäÆ÷¿â-------------" << endl;
             Fork f;
             f.show();
             cout << endl;
@@ -1138,7 +1181,8 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
         else if((msg.find("pick")==0)&&msg.length()>=6)
         {
             string item = msg.substr(5, msg.length() - 5);
-            if(!(item==global_fork_name||item==global_knife_name||item==global_umbrella_name||item==global_gun_name))
+            if(!(item==global_bread_name||item==global_apple_name||
+                item==global_fork_name||item==global_knife_name||item==global_umbrella_name||item==global_gun_name))
             {
                 cout << "ÎŞ·¨ÔÚÕâÀï¹ºÂò´ËÎïÆ·£¡" << endl;
                 return;
@@ -1164,9 +1208,14 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
 }
 //--------------------------------------------------------------------
 
+bool Game::is_quit()const
+{
+    return this->stage==QUIT;
+}
+
 bool Game::is_end()const
 {
-    return this->stage==DIE||this->stage==ALONE_SUC||this->stage==SUC||this->stage==QUIT;
+    return this->stage == DIE || this->stage == ALONE_SUC || this->stage == SUC;
 }
 
 void Game::quit()//ÍË³öÓÎÏ·

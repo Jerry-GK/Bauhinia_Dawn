@@ -12,7 +12,7 @@ int main()
 {
 	Game g;
 	g.Init();
-	while(!g.is_end())
+	while(!g.is_quit())
 	{
 		g.read();
 	}

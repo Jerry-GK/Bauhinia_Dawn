@@ -91,11 +91,13 @@ public:
     //fight
     int  fight(Zombie *z); //打赢了返回2 逃跑返回1 被击败返回0
 
-    void attack(Weapon* w, Zombie* z);//用某种武器攻击丧尸
+    void attack(Zombie* z);//用当前武器攻击丧尸
 
     void getdamage(const int damage);//被攻击
 
     int fight_many(vector <Zombie*> v_zome ) ; //打一群僵尸，返回值 : 打赢了返回2 逃跑返回1 被击败返回0
+
+    int special_attack (Weapon* w,Zombie * z) ;
 
     //vehicle
     Vehicle* get_veh();
