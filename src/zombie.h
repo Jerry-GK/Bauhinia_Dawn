@@ -15,10 +15,11 @@ private:
     int EXP;//被击败的经验值
     int award_money; //击败后获得的钱
     int special_attack_chance; //特殊攻击的几率
+    string property;//属性，默认为无属性
 
 public:
     Zombie();
-    Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP, const int set_money ,const int set_chance) ;
+    Zombie (const string setname , const int setaggress , const int setHP , const int setdef , const int setEXP, const int set_money ,const int set_chance , const string setpro) ;
     virtual void show();
     void attack(Player* p);
     virtual void special_attack(Player *p);
@@ -34,6 +35,7 @@ public:
     int getaggress() const ;
     int getmoney() const ;
     int getchance() const ;//特殊攻击发动的概率
+    string getpro() const ;
     string getname () const ;   
 };
 
@@ -43,6 +45,7 @@ public:
     Roll_Zombie();
     void attack(Player* p) ;
     void special_attack(Player *p);
+    void show();
 };
 
 class Water_Zombie:public Zombie
@@ -51,4 +54,14 @@ public:
     Water_Zombie();
     void attack(Player* p) ;
     void special_attack(Player *p);
+    void show();
+};
+
+class Fire_Zombie:public Zombie
+{
+public:
+    Fire_Zombie();
+    void attack(Player* p) ;
+    void special_attack(Player *p);
+    void show();
 };

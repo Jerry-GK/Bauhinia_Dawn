@@ -11,10 +11,7 @@ Player::Player()
     speed = global_initial_speed ;
     move_capability = global_initial_move_capability ;
     money = global_initial_money;
-    for (int i = 0 ; i < 9 ; i++)
-    {
-        needEXP[i] = global_initial_EXP[i] ;
-    }
+
     cur_veh = NULL ;
     cur_wep=NULL;
     pl_cur_status = UNKNOWN;
@@ -129,7 +126,7 @@ void Player::changeHP(const int change)//恢复/损失生命值
 void Player::gainEXP(const int EXP) //获得经验值
 {
     currentEXP += EXP ;
-    while(currentEXP >= needEXP[level-1])
+    while(currentEXP >= global_initial_EXP[level-1])
     {
         levelUP(level) ;
     }
@@ -137,8 +134,8 @@ void Player::gainEXP(const int EXP) //获得经验值
 
 void Player::levelUP(int currentlevel)//升级 
 {
-    currentEXP -= needEXP[level - 1] ;
-    MAXHP += needEXP[level-1] / 10 ;
+    currentEXP -= global_initial_EXP[level - 1] ;
+    MAXHP += global_initial_EXP[level-1] / 10 ;
     changeHP(0.1 * MAXHP) ;
     level ++ ;
     aggress += 1 ;
@@ -195,7 +192,7 @@ void Player::show_state()//显示玩家属性状态
     cout<<"玩家属性："<<endl;
     cout<<"姓名："<<name<<endl;
     cout<<"等级："<<level<<endl;
-    if (level != 10 ) {cout<<"经验："<<currentEXP<<"  升级需要："<<needEXP[level-1] << endl;}
+    if (level != 10 ) {cout<<"经验："<<currentEXP<<"  升级需要："<<global_initial_EXP[level-1] << endl;}
     else {cout << "你已经达到了最高等级： level 10 !" << endl;} //这里存在 满级时数组越界的bug 需要判断是否满级
     cout<<"玩家攻击力："<<aggress<<endl;
     cout<<"武器攻击力："<<this->getweaponaggress()<<endl;
@@ -226,6 +223,13 @@ Vehicle* Player::get_veh()
 
 void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
 {
+    string pick_str;
+    if(mode==PICK)
+        pick_str = "拾取";
+    else if(mode==BUY)
+        pick_str = "购买";
+    else if(mode==SUDO)
+        pick_str = "强制获得";
     if (Food::isFood(item) )
     {
         Food *a = Food::new_food(item);
@@ -271,18 +275,12 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
                     cout << "花费￥" << b->getcost() <<", 剩余￥"<<getmoney() << endl;
                 }
             }
-            string pick_str;
-            if(mode==PICK)
-                pick_str = "拾取";
-            else if(mode==BUY)
-                pick_str = "购买";
-            else if(mode==SUDO)
-                pick_str = "强制获得";
+
             cout << pick_str <<"了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
         }
         else
         {
-            cout << "拾取/购买失败 需要空间：" << a->getoccupancy() 
+            cout <<pick_str << "失败 需要空间：" << a->getoccupancy() 
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity() - mybag.getcurcapacity() ;
         }
         delete a;
@@ -308,11 +306,12 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
                 change_money(-a->getcost());
                 cout << "花费￥" << a->getcost() <<", 剩余￥"<<getmoney() << endl;
             }
-            cout << "拾取/购买了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
+            cout << pick_str <<"了 " << item << " 背包剩余空间：" << mybag.getmaxcapacity()-mybag.getcurcapacity() << endl;
+            cout << "使用use <武器英文名> 可以装备该武器" << endl;
         }
         else 
         {
-            cout << "拾取失败 需要空间：" << a->getoccupancy() 
+            cout << pick_str <<"失败, 需要空间：" << a->getoccupancy() 
             << "  ，当前空闲空间： " <<  mybag.getmaxcapacity()- mybag.getcurcapacity() ;
         }
         delete a;
@@ -465,7 +464,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
         else if (msg == "hit")
         {
             attack(z) ;
-            if (! z->getHP()) //打败了僵尸
+            if (! z->getHP()) //打败了丧尸
             {
                 cout << "\n你克服困难,终于击败了丧尸！" << endl;
                 this->gainEXP(z->getEXP());
@@ -481,7 +480,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
         }
 
         z->attack(this);
-        if ( !getcurrentHP() )//被僵尸打败
+        if ( !getcurrentHP() )//被丧尸打败
         {
             cout << "\n很遗憾,你棋差一招，被丧尸击败了" << endl;
             return 0 ;
@@ -490,7 +489,7 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
     }
 }
 
-//打一群僵尸，返回值 : 打赢了返回2 逃跑返回1 被击败返回0 （传参bug 返回-1）
+//打一群丧尸，返回值 : 打赢了返回2 逃跑返回1 被击败返回0 （传参bug 返回-1）
 int Player::fight_many(vector <Zombie*> v_zome )   
 {
     int num_z = v_zome.size() ;
@@ -527,55 +526,39 @@ int Player::fight_many(vector <Zombie*> v_zome )
         }
         else if (msg == "hit" && v_zome.size() > 1)
         {
-            cout << "\n你要选择攻击的僵尸是:(输入序号)"  << endl ;
-            int i =  1;
+            cout << "\n你要选择攻击的丧尸是:(输入序号)"  << endl ;
+            int i =  0;
             for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
             {
-                cout << i << ". " << (*p)->getname() << "当前生命值：" << (*p)->getHP() << endl;
+                cout << i+1 << ". " << (*p)->getname() << "当前生命值：" << (*p)->getHP() << endl;
                 i ++ ;
-            } // choose the attack object  ,like(1.水僵尸 2.卷王僵尸 3.一般僵尸)
+            } 
             cout << "\n<fighting> Please Enter: " ;
             getline(cin,msg); //得到字符串 转换成整数int
 
-            stringstream ss ; ss.clear() ;
-            ss << msg ; int choose ; ss >> choose ; ss.clear() ;
-
-            i = 1 ;
-            for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
+            int choose = atoi(msg.c_str());
+            if(choose<=v_zome.size())
             {
-                if (i == choose)
+                attack(v_zome[choose-1]) ;
+                if ( (v_zome[choose-1]) ->getHP() == 0) //杀死了这个丧尸
                 {
-                    attack(*p) ;
-                    if ( (*p) ->getHP() == 0) //杀死了这个丧尸
-                    {
-                        cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
-                        this->gainEXP((*p)->getEXP());
-                        this->change_money((*p)->getmoney());
-                        v_zome.erase(p);
-                    }
-                    break ;
+                    cout << "\n你克服困难,打败了" << (v_zome[choose-1])->getname() << endl;
+                    this->gainEXP((v_zome[choose-1])->getEXP());
+                    this->change_money((v_zome[choose-1])->getmoney());
+                    v_zome.erase(v_zome.begin()+choose-1);
                 }
-                i++ ;
             }
-            if (i != choose) //输入有问题 , 随机攻击一个
+            else //输入有问题 , 随机攻击一个
             {
                 cout << "\n(输入有误) 你手忙脚乱，无力思索要攻击哪个，便随便攻击了其中一个" << endl;
-                choose = rand() % v_zome.size() ; i = 0 ;
-                for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
+                choose = rand() % v_zome.size() + 1 ;
+                attack(v_zome[choose-1]) ;
+                if ( (v_zome[choose-1]) ->getHP() == 0) //杀死了这个丧尸
                 {
-                    if (i == choose)
-                    {
-                        attack(*p) ;
-                        if ( (*p) ->getHP() == 0) //杀死了这个丧尸
-                        {
-                            cout << "\n你克服困难,打败了" << (*p)->getname() << endl;
-                            this->gainEXP((*p)->getEXP());
-                            this->change_money((*p)->getmoney());
-                            v_zome.erase(p);
-                        }
-                        break ;
-                    }
-                    i++ ;
+                    cout << "\n你克服困难,打败了" << (v_zome[choose-1])->getname() << endl;
+                    this->gainEXP((v_zome[choose-1])->getEXP());
+                    this->change_money((v_zome[choose-1])->getmoney());
+                    v_zome.erase(v_zome.begin()+choose-1);
                 }
             }
 
@@ -591,7 +574,7 @@ int Player::fight_many(vector <Zombie*> v_zome )
         else if (msg == "hit" && v_zome.size() == 1)
         {
             attack(v_zome[0]) ;
-            if (!v_zome[0]->getHP()) //打败了僵尸
+            if (!v_zome[0]->getHP()) //打败了丧尸
             {
                 cout << "\n你克服困难,终于击败了最后一只丧尸！" << endl;
                 this->gainEXP(v_zome[0]->getEXP());
@@ -607,18 +590,16 @@ int Player::fight_many(vector <Zombie*> v_zome )
             continue;
         }
         //玩家操作结束
-        //玩家被所有活着的僵尸轮流进攻
+        //玩家被所有活着的丧尸轮流进攻
         for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
         {
             (*p)->attack(this) ;
-            if ( !getcurrentHP() )//被僵尸打败
+            if ( !getcurrentHP() )//被丧尸打败
             {
                 cout << "\n很遗憾,你棋差一招，被丧尸击败了" << endl;
                 return 0 ;
             }
-        } //死掉的僵尸自动被delete ;
-
-
+        } //死掉的丧尸自动被delete ;
         round++;
     }
 
@@ -637,13 +618,17 @@ void Player::getdamage(const int damage)//被攻击
 void Player::attack(Zombie *z)
 {
     cout  << "你发动了攻击！" << endl;
-    //rand(20) + aggress > def can dealt damage to zombie by your weapon + 1;
-    int damage = rand()%20 + aggress - z->getdef();
+    int damage = rand()%30 + aggress + (cur_wep==NULL?0:cur_wep->getattack()) - z->getdef();
     if ( damage>0 ) 
     {
         if(cur_wep!=NULL)
-            damage += cur_wep->wep_attack(z);
+            damage += cur_wep->wep_attack(z) - cur_wep->getattack();
         z->getdamage(damage);
+        if(z->getname()==global_fire_name && (cur_wep==NULL || cur_wep->getname()!=global_umbrella_name))//用非伞武器攻击火丧尸，自身也收到伤害
+        {
+            cout << "你攻击了火丧尸，但并没有用水属性的伞，自身也被烧伤了！" << endl;
+            getdamage(damage * global_fire_damage_return_rate);
+        }
     }
     else 
     {

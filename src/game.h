@@ -21,8 +21,11 @@ private:
 
 public:
     void Init();//初始化
+    bool Load(string filename);//读取存档
 
-    void read();//读取一条信息，回车将回submit
+    bool Save(string filename);//存档
+
+    void read();  //读取一条信息，回车将回submit
     void submit();//提交输入信息：input_box->msg, 清空input_box, 调用process函数
     void process(string msg);//根据游戏、玩家状态以及输入信息，做出信息反馈（游戏最重要的逻辑部分）
  

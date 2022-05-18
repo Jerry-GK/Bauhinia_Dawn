@@ -23,8 +23,6 @@ private:
     string name;
     int level ; //等级，初始：1，最高level：10
     int currentEXP ; //经验
-    int needEXP[9]; //升级所需经验数组 
-
     int aggress;//攻击力
 
     int currentHP;//当前体力

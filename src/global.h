@@ -23,21 +23,33 @@ extern const int global_fork_attack;
 extern const int global_fork_occupancy;
 extern const int global_fork_cost;
 extern const int global_fork_chance;
+
 extern const string global_knife_name;
 extern const int global_knife_attack;
 extern const int global_knife_occupancy;
 extern const int global_knife_cost;
 extern const int global_knife_chance;
+
 extern const string global_umbrella_name;
 extern const int global_umbrella_attack;
 extern const int global_umbrella_occupancy;
 extern const int global_umbrella_cost;
 extern const int global_umbrella_chance;
+extern const string global_umbrella_property;
+
 extern const string global_gun_name;
 extern const int global_gun_attack;
 extern const int global_gun_occupancy;
 extern const int global_gun_cost;
 extern const int global_gun_chance;
+extern const string global_gun_property;
+
+extern const string global_bloodsickle_name;
+extern const int global_bloodsickle_attack;
+extern const int global_bloodsickle_occupancy;
+extern const int global_bloodsickle_cost;
+extern const int global_bloodsickle_chance;
+extern const string global_bloodsickle_property;
 
 //载具
 extern const string global_bike_name;
@@ -89,11 +101,22 @@ extern const int global_water_def;
 extern const int global_water_EXP;
 extern const int global_water_money;
 extern const int global_water_chance;
+extern const string global_water_property;
+extern const string global_fire_name;
+extern const int global_fire_aggress;
+extern const int global_fire_HP;
+extern const int global_fire_def;
+extern const int global_fire_EXP;
+extern const int global_fire_money;
+extern const int global_fire_chance;
+extern const string global_fire_property;
+extern const double global_fire_damage_return_rate;
 
 //游戏
 extern const int global_jump_damage;
 extern const double global_move_const;
 extern const string global_map_open_cmd;
+extern const string global_save_file_name;
 
 //物件字符串集合
 extern set<string> global_set_weapons;

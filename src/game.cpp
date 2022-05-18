@@ -13,26 +13,38 @@ void Game::Init()
 
     p.set("dormitory",20,120);//ËŞÉá
     p.add_status(DOR_TO_LOOK_OUTSIDE);
+    p.add_status(DOR_TO_CHOOSE);
     game_map.add_pos(p);
     
     p.set("shop",22,115);//³¬ÊĞ
     p.add_status(SHOP_SEARCH);
+    p.add_status(SHOP_ASK);
     game_map.add_pos(p);
 
     p.set("dor gate",15,115);//ËŞÉáÃÅ¿Ú
     p.add_status(GATE_FIGHT);
+    p.add_status(GATE_AFTER_FIGHT);
     game_map.add_pos(p);
 
     p.set("west building",20,50);//Î÷½Ì
     p.add_status(WEST_INTO_BUILDING);
+    p.add_status(WEST_MEET);
+    p.add_status(WEST_FIGHT);
+    p.add_status(WEST_CHECK);
     game_map.add_pos(p);
 
     p.set("bio lab",70,10);//ÉúÎïÊµÑéÊÒ
     p.add_status(BIO_INTO_BUILDING);
+    p.add_status(BIO_MEET);
+    p.add_status(BIO_LEAVE);
     game_map.add_pos(p);
-    
+
     p.set("roof",25,65);//Ô­¹ÜÔºÂ¥¶¥
     p.add_status(ROOF_HALL);
+    p.add_status(ROOF_TOP);
+    p.add_status(ROOF_LEAVE);
+    p.add_status(ROOF_SUC);
+    p.add_status(ROOF_TO_WHARF);
     game_map.add_pos(p);
 
     p.set("wharf",35,75);//Ë®ÉÏÂëÍ·
@@ -41,6 +53,9 @@ void Game::Init()
 
     p.set("lake",35,75);//ÆôÕæºş
     p.add_status(LAKE_ROW);
+    p.add_status(LAKE_FIGHT);
+    p.add_status(LAKE_SAVE);
+    p.add_status(LAKE_SUC);
     game_map.add_pos(p);
 
     p.set("south gate",0,0);//ÄÏÃÅ³ö¿Ú
@@ -58,6 +73,31 @@ void Game::Init()
 
     //init player
     pl.set_pos(game_map.get_pos("dormitory"));
+}
+
+bool Game::Load(string filename)//´ıÊµÏÖµÄ¶Áµµº¯Êı
+{
+    //´ò¿ªÎÄ¼ş
+    //´ò¿ªtxtÎÄ¼ş£¨Èô²»´æ·µ»Øfalse)
+    //ÒÀ´Î¶ÁÈëbagµÄ³ÉÔ±±äÁ¿£¬ÉèÖÃbagÊôĞÔ
+    //ÒÀ´Î¶ÁÈëplayer³ÉÔ±±äÁ¿£¬²¢ÓÃÆäÉèÖÃgame¶ÔÏóÖĞplayerµÄÊôĞÔ
+    //ÒÀ´Î¶ÁÈëgame³ÉÔ±±äÁ¿£¬²¢ÓÃÆäÉèÖÃgame¶ÔÏóµÄÊôĞÔ
+
+    //³É¹¦Ôò·µ»Øtrue
+    cout << "¶ÁµµÔİÎ´ÊµÏÖ£¡" << endl;
+    return false;
+}
+
+bool Game::Save(string filename)//´ıÊµÏÖµÄ´æµµº¯Êı
+{
+    //´ò¿ªtxtÎÄ¼ş£¨Èô²»´æÔÚÔòĞÂ½¨ÎÄ¼ş£©
+    //ÒÀ´ÎĞ´ÈëbagµÄ³ÉÔ±±äÁ¿£¬mapÒªÓÃ×Ö·û´®±íÊ¾
+    //ÒÀ´ÎĞ´Èëplayer³ÉÔ±±äÁ¿, Ö¸ÕëĞÍ³ÉÔ±±äÁ¿¸ÄÎª´æÆä¶ÔÓ¦¶ÔÏóµÄgetname()
+    //ÒÀ´ÎĞ´Èëgame³ÉÔ±±äÁ¿stage, partener_alive, enemy_alive
+
+    //³É¹¦Ôò·µ»Øtrue
+    cout << "´æµµÔİÎ´ÊµÏÖ£¡" << endl;
+    return false;
 }
 
 void Game::read()
@@ -85,14 +125,14 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
     //½øÈëÓÎÏ·
     if(is_end())//ÓÎÏ·ÒÑ¾­½áÊø£¬¾ö¶¨ÊÇ·ñÖØÀ´
     {
-        if(msg=="roll back")
+        if(msg=="load")
         {
-            cout << "\nµ±Ç°ÉĞÎ´ÏëºÃÈçºÎÊµÏÖ»Øµµ!" << endl;
+            Load(global_save_file_name);//¶ÁÈ¡´æµµ
             return;
         }
         else if(msg=="remake")
         {
-            Init();
+            Init();//ĞÂ½¨ÓÎÏ·
             return;
         }
         else if(msg=="quit")
@@ -122,9 +162,14 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             this->stage = PLAYING;
             return;
         }
+        else if(msg=="load")
+        {
+            cout<<"¶ÁÈ¡´æµµ¹¦ÄÜÉĞÎ´ÊµÏÖ£¡"<<endl;
+            return;
+        }
         else
         {
-            cout<<"ÇëÊäÈëbegin¿ªÊ¼ÓÎÏ·£¡"<<endl;
+            cout<<"ÇëÊäÈëbegin¿ªÊ¼ÓÎÏ·£¬»òÊäÈëload¶ÁÈ¡´æµµ£¡"<<endl;
             return;
         }
     }
@@ -164,9 +209,16 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
         this->pl.get_off_vehicle();
         return;
     }
+    else if(msg=="save")
+    {
+        Save(global_save_file_name);
+        return;
+    }
     else if(msg=="goto east building")//Ç°Íù¶«½ÌÑ§Â¥£¨É¥Ê¬¿ß£©
     {
-        if(pl.get_cur_pos()->get_name()=="dormitory"||pl.get_cur_pos()->get_name()=="lake"||pl.get_cur_pos()->get_name()=="roof")
+        if(pl.get_cur_pos()->get_name()=="dormitory"||pl.get_cur_pos()->get_name()=="lake"
+           ||pl.get_cur_pos()->get_name()=="roof"||pl.get_cur_pos()->get_name()=="library"
+           ||pl.get_cur_pos()->get_name()=="east building")
         {
             cout << "µ±Ç°Î»ÖÃÎŞ·¨Ö±½ÓÇ°Íù¶«½ÌÑ§Â¥£¡" << endl;
             return;
@@ -179,7 +231,9 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
     }
     else if(msg=="goto library")
     {
-        if(pl.get_cur_pos()->get_name()=="dormitory"||pl.get_cur_pos()->get_name()=="lake"||pl.get_cur_pos()->get_name()=="roof")
+        if(pl.get_cur_pos()->get_name()=="dormitory"||pl.get_cur_pos()->get_name()=="lake"
+           ||pl.get_cur_pos()->get_name()=="roof"||pl.get_cur_pos()->get_name()=="library"
+           ||pl.get_cur_pos()->get_name()=="east building")
         {
             cout << "µ±Ç°Î»ÖÃÎŞ·¨Ö±½ÓÇ°ÍùÒ½Ñ§Í¼Êé¹İ£¡" << endl;
             return;
@@ -188,6 +242,11 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             return;
         pl.get_off_vehicle();
         cout << "ÄãÀ´µ½ÁËÒ½Ñ§Í¼Êé¹İ¡£" << endl;
+        return;
+    }
+    else if(msg=="clear")
+    {
+        system("cls");
         return;
     }
     else if((msg.find("sudo goto")==0)&&msg.length()>=11)
@@ -703,7 +762,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             vector<Zombie*> v_zom;
             Zombie *z1 = new Zombie;
             Zombie *z2 = new Roll_Zombie;
-            Zombie *z3 = new Water_Zombie;
+            Zombie *z3 = new Fire_Zombie;
             v_zom.push_back(z1);
             v_zom.push_back(z2);
             v_zom.push_back(z3);
@@ -755,7 +814,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             else if(msg=="fight")
             {
                 //fight success
-                switch (pl.fight_many(v_zom)) // "2" is to be replaced by "fight_many(v_zom)", where "int fight_many(vector<Zombie*>)"
+                switch (pl.fight_many(v_zom))
                 {
                     case 0:
                         this->stage = DIE;
@@ -1110,32 +1169,78 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
         }
         else if(msg=="fight")
         {
-            Zombie *z;
+            Zombie *z = NULL;
+            vector<Zombie*> v_zom;
+            
             //Ëæ»úÉú³ÉÉ¥Ê¬
-            int res = rand() % 3;
-            if(res==0)
+            int res = rand() % 10;
+            if(res<=1)//20%
                 z = new Zombie;
-            else if(res==1)
+            else if(res<=3)//20%
                 z = new Roll_Zombie;
-            else if(res==2)
+            else if(res<=5)//20%
                 z = new Water_Zombie;
-
-            cout << "Õâ´Î³öÏÖµÄÊÇ" << z->getname() << " !" << endl;
-            switch(pl.fight(z))
+            else if(res<=7)//20%
+                z = new Fire_Zombie;
+            else if(res<=8)//10%
             {
-                case 0:
-                    this->stage=DIE;
-                    cout << info_end << endl;
-                    break;
-                case 1: 
-                    cout<<"Äã¸Ï½ôÌÓ»ØÁË¶«½ÌÃÅ¿Ú"<<endl;
-                    delete z;
-                    break;
-                case 2:
-                    //³É¹¦´ò°ÜÉ¥Ê¬
-                    break;
-                    delete z;
+                Zombie *z1 = new Zombie;
+                Zombie *z2 = new Roll_Zombie;
+                Zombie *z3 = new Fire_Zombie;
+                v_zom.push_back(z1);
+                v_zom.push_back(z2);
+                v_zom.push_back(z3);
             }
+            else if(res<=9)//10%
+            {
+                Zombie *z1 = new Zombie;
+                Zombie *z2 = new Roll_Zombie;
+                Zombie *z3 = new Water_Zombie;
+                v_zom.push_back(z1);
+                v_zom.push_back(z2);
+                v_zom.push_back(z3);
+            }
+
+            if(z!=NULL)
+            {
+                cout << "Õâ´Î³öÏÖµÄÊÇ" << z->getname() << " !" << endl;
+                switch(pl.fight(z))
+                {
+                    case 0:
+                        this->stage=DIE;
+                        cout << info_end << endl;
+                        break;
+                    case 1: 
+                        cout<<"Äã¸Ï½ôÌÓ»ØÁË¶«½ÌÃÅ¿Ú"<<endl;
+                        delete z;
+                        break;
+                    case 2:
+                        //³É¹¦´ò°ÜÉ¥Ê¬
+                        cout << "Äã³É¹¦´ò°ÜÁËÕâÖ»É¥Ê¬£¬»¹Òª¼ÌĞøÕ½¶·Âğ£¿" << endl;
+                        break;
+                        delete z;
+                }
+            }
+            else if(!v_zom.empty())
+            {
+                switch (pl.fight_many(v_zom))//fight many zombies
+                {
+                    case 0:
+                        this->stage = DIE;
+                        cout << info_end << endl;
+                        break;
+                    case 1:
+                        cout << "Äã·¢¾õ´ò²»¹ıÕâÃ´¶àÉ¥Ê¬£¬ÀÇ±·µØÌÓ»ØÁË¶«½ÌÃÅ¿Ú" << endl;
+                        break;;
+                    case 2:
+                        cout << "Äã³É¹¦´ò°ÜÁËÕâÒ»ÈºÉ¥Ê¬£¬»¹Òª¼ÌĞøÕ½¶·Âğ£¿" << endl;
+                        break;
+                }
+                for (int i = 0; i < v_zom.size();i++)
+                    delete v_zom[i];
+            }
+            else
+                cout << "LOGIC ERROT: No zombie occurs!" << endl;
             return;
         }
         else if(msg=="return")
@@ -1176,13 +1281,17 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             cout << endl;
             Gun gun;
             gun.show();
+            cout << endl;
+            BloodSickle bs;
+            bs.show();
             return;
         }
         else if((msg.find("pick")==0)&&msg.length()>=6)
         {
             string item = msg.substr(5, msg.length() - 5);
             if(!(item==global_bread_name||item==global_apple_name||
-                item==global_fork_name||item==global_knife_name||item==global_umbrella_name||item==global_gun_name))
+                item==global_fork_name||item==global_knife_name||item==global_umbrella_name||item==global_gun_name
+                ||item==global_bloodsickle_name))
             {
                 cout << "ÎŞ·¨ÔÚÕâÀï¹ºÂò´ËÎïÆ·£¡" << endl;
                 return;

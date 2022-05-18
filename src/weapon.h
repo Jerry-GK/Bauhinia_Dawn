@@ -6,7 +6,7 @@ using namespace std;
 
 class Zombie;
 
-class Weapon//?é?ó??
+class Weapon
 {
 private:
     string name ;
@@ -14,8 +14,9 @@ private:
     int occupancy ;
     int cost;
     int special_attack_chance ;
+    string property ;
 public:
-    Weapon(const string setname, const int setattack, const int setoccupancy, int setcost , int chance);
+    Weapon(const string setname, const int setattack, const int setoccupancy,const int setcost ,const int chance , const string setpro );
     void attack_buff(int a) ;
     string getname() const;
     int getattack() const;
@@ -58,6 +59,14 @@ class Gun:public Weapon
 {
 public:
     Gun();
+    void show() const;
+    int wep_special_attack(Zombie* z);
+};
+
+class BloodSickle:public Weapon
+{
+public:
+    BloodSickle();
     void show() const;
     int wep_special_attack(Zombie* z);
 };
