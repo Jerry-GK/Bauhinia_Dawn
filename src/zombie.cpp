@@ -144,7 +144,7 @@ void Roll_Zombie::special_attack(Player *p)
     else
     {
         cout << "它控制了教室里的书本，一齐向你飞来" << endl;
-        p->getdamage (getaggress() + rand() % 5) ;
+        p->getdamage (3*getaggress() + rand() % 5) ;
     }
     
 }

@@ -82,3 +82,7 @@ int Bag::getmaxcapacity () const
 {
     return maxcapacity ;
 }
+map <string,Info> Bag::getbag() const 
+{
+    return bag ;
+}

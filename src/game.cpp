@@ -1,8 +1,9 @@
 #include "game.h"
+using namespace std ;
 
 void Game::Init()
 {
-    cout<<"»¶Ó­À´µ½¡¶×Ï¾£ÀèÃ÷¡·! (ÊäÈëbegin¿ªÊ¼ÓÎÏ·£¬ÓÎÏ·¹ı³ÌÖĞ½¨ÒéÊäÈëhelp²é¿´Ö¸ÁîËµÃ÷£¬¿ÉÊäÈëhint²é¿´ÌáÊ¾)"<<endl;
+    cout<<"»¶Ó­À´µ½¡¶×Ï¾£ÀèÃ÷¡·! (ÊäÈëstart¿ªÊ¼ÓÎÏ·£¬ÓÎÏ·¹ı³ÌÖĞ½¨ÒéÊäÈëhelp²é¿´Ö¸ÁîËµÃ÷£¬¿ÉÊäÈëhint²é¿´ÌáÊ¾)"<<endl;
     this->stage=NOT_BEGIN;
     //Ö÷ÏßµØµã³õÊ¼»¯
     Position p;
@@ -75,8 +76,18 @@ void Game::Init()
     pl.set_pos(game_map.get_pos("dormitory"));
 }
 
+void Game::catchvalue (int beginpos , string get , stringstream & ss , int& answer)
+{
+    //cout << get << endl; 
+    ss << get.substr(beginpos,get.size()-1) ;
+    ss >> answer ;
+    ss.clear() ;
+    return ;
+}
+
 bool Game::Load(string filename)//´ıÊµÏÖµÄ¶Áµµº¯Êı
 {
+    
     //´ò¿ªÎÄ¼ş
     //´ò¿ªtxtÎÄ¼ş£¨Èô²»´æ·µ»Øfalse)
     //ÒÀ´Î¶ÁÈëbagµÄ³ÉÔ±±äÁ¿£¬ÉèÖÃbagÊôĞÔ
@@ -84,20 +95,157 @@ bool Game::Load(string filename)//´ıÊµÏÖµÄ¶Áµµº¯Êı
     //ÒÀ´Î¶ÁÈëgame³ÉÔ±±äÁ¿£¬²¢ÓÃÆäÉèÖÃgame¶ÔÏóµÄÊôĞÔ
 
     //³É¹¦Ôò·µ»Øtrue
-    cout << "¶ÁµµÔİÎ´ÊµÏÖ£¡" << endl;
-    return false;
+    cout << "¶ÁµµÖĞ . . ." << endl;
+    ifstream fin(global_save_file_name.c_str(), ios::in);
+    if (!fin) { //´ò¿ªÊ§°Ü
+        cout << "¶ÁÈ¡´æµµÊ±·¢Éú´íÎó(¿ÉÄÜÊÇ´æµµÎÄ¼ş²»´æÔÚ)£¡" << endl;
+        return false ;
+    }
+    else
+    {
+        string get ; 
+        stringstream ss ; ss.clear() ;
+        int value ;
+        getline(fin,get) ;
+        while(get != "Game member:")
+        {
+            getline(fin,get) ;
+        }
+        getline(fin,get) ; catchvalue(7,get,ss,value)  ; stage = GAME_STAGE ( value );  //stage
+        getline(fin,get) ; catchvalue(9,get,ss,value)  ; partner_alive = value ; //partner
+        getline(fin,get) ; catchvalue(8,get,ss,value)  ; enemy_alive = value ; //partner
+
+        getline(fin,get) ;
+        while(get != "Player member :")
+        {
+            getline(fin,get) ;
+        }
+        getline(fin,get) ; pl.setname( get.substr(6,get.size()-1) );
+        getline(fin,get) ; catchvalue(7,get,ss,value) ; pl.setLevel( value );
+        getline(fin,get) ; catchvalue(12,get,ss,value) ; pl.setcurrentEXP( value );
+        getline(fin,get) ; catchvalue(11,get,ss,value) ; pl.setcurrentHP( value );
+        getline(fin,get) ; catchvalue(7,get,ss,value) ; pl.setMAXHP( value );
+        getline(fin,get) ; catchvalue(7,get,ss,value) ; pl.setspeed( value );
+        getline(fin,get) ; catchvalue(17,get,ss,value) ; pl.setmove_capability( value );
+        getline(fin,get) ; catchvalue(7,get,ss,value) ; pl.setmoney( value );
+        getline(fin,get) ; get = get.substr(17,get.size()-1) ;
+        if (get == "NULL") pl.setcurrent_Veh(NULL) ;
+        else
+        {
+            Vehicle *p ;
+            if (get == global_car_name){p = new Car ;}
+            else if (get == global_ebike_name){p = new E_Bike ;}
+            else if (get == global_bike_name){ p = new Bike ;}
+            else if (get == global_boat_name){p = new Boat ;}
+            pl.setcurrent_Veh(p) ;
+        }
+        getline(fin,get) ; get = get.substr(16,get.size()-1) ;
+        if (get == "NULL") pl.setcurrent_Wep(NULL) ;
+        else
+        {
+            Weapon *p ;
+            if (get == global_fork_name ) {p = new Fork ;}
+            else if (get == global_knife_name){p = new Knife ;}
+            else if (get == global_umbrella_name){ p = new Umbrella ;}
+            else if (get == global_gun_name){p = new Gun;}
+            else if (get == global_bloodsickle_name) {p = new BloodSickle ;}
+            pl.setcurrent_Wep(p) ;
+        }
+        getline(fin,get) ; catchvalue(16,get,ss,value) ; pl.set_status( PLAYER_STAGE (value) );
+        getline(fin,get) ; get = get.substr(18,get.size()-1) ;pl.set_pos(game_map.get_pos(get)); //position
+        getline(fin,get) ; catchvalue(13,get,ss,value) ; pl.set_last_status( PLAYER_STAGE (value) );
+        getline(fin,get) ; get = get.substr(15,get.size()-1) ;
+        if(get=="NULL")
+            pl.set_pos(NULL);
+        else
+            pl.set_last_pos(game_map.get_pos(get)); //last position
+
+        getline(fin,get) ;
+        while(get != "Bag member:")
+        {
+            getline(fin,get) ;
+        }
+        getline(fin,get) ; catchvalue(6,get,ss,value) ; //value = size ;
+        Bag p ;
+        int size = value , number = 0 , occupancy = 0 ;
+        string name  ;
+        for (int i = 0 ; i < size ; i++)
+        {
+            fin >> name >> number >> occupancy ;
+            for (int j = 0 ; j < number ; j++)
+            {
+                p.add(name,occupancy) ;
+            }
+        }
+        pl.setbag( p ) ;
+
+        fin.close();
+        cout << "¶Áµµ³É¹¦£¡" << endl;
+        return true ;
+    }
 }
+
+
 
 bool Game::Save(string filename)//´ıÊµÏÖµÄ´æµµº¯Êı
 {
-    //´ò¿ªtxtÎÄ¼ş£¨Èô²»´æÔÚÔòĞÂ½¨ÎÄ¼ş£©
-    //ÒÀ´ÎĞ´ÈëbagµÄ³ÉÔ±±äÁ¿£¬mapÒªÓÃ×Ö·û´®±íÊ¾
-    //ÒÀ´ÎĞ´Èëplayer³ÉÔ±±äÁ¿, Ö¸ÕëĞÍ³ÉÔ±±äÁ¿¸ÄÎª´æÆä¶ÔÓ¦¶ÔÏóµÄgetname()
-    //ÒÀ´ÎĞ´Èëgame³ÉÔ±±äÁ¿stage, partener_alive, enemy_alive
+    ofstream fout(global_save_file_name.c_str()) ;
+    cout << "´æµµÖĞ . . ." << endl;
+    if (fout)
+    {
+        fout << "Game Saved Data :" << endl;
 
-    //³É¹¦Ôò·µ»Øtrue
-    cout << "´æµµÔİÎ´ÊµÏÖ£¡" << endl;
-    return false;
+        //¶ÔÓÎÏ·½×¶ÎµÄĞ´Èë      
+        fout << "Game member:" << endl;
+        fout << "stage :" << stage << endl;
+        fout << "partner :" << partner_alive << endl;
+        fout << "enemy :" << enemy_alive << endl << "- - - - " << endl;
+
+        //¶ÔÍæ¼ÒĞÅÏ¢µÄĞ´Èë
+        fout << "Player member :" << endl;string name;
+        fout << "Name :" << pl.getname() << endl;
+        fout << "Level :" << pl.getLevel() << endl;
+        fout << "CurrentEXP :" << pl.getcurrentEXP() << endl;
+        fout << "CurrentHP :" << pl.getcurrentHP()  << endl;
+        fout << "MAXHP :" << pl.getMAXHP() << endl;
+        fout << "Speed :" << pl.getspeed() << endl;
+        fout << "Move_Capability :" <<pl.get_move_capability() << endl; 
+        fout << "Money :" << pl.getmoney() << endl;
+        fout << "Current_Vehicle :" ;
+        if (pl.get_vehicle() != NULL)  fout << pl.get_vehicle()->getname() << endl;
+        else { fout << "NULL" << endl;}
+        fout << "Current_Weapon :" ;
+        if (pl.get_weapon() != NULL)  fout << pl.get_weapon()->getname() << endl;
+        else { fout << "NULL" << endl;}
+        fout << "Current_Status :" << pl.get_cur_status() << endl; 
+        fout << "Current_Position :" << pl.get_cur_pos()->get_name() << endl;
+        fout << "Last_Status :" << pl.get_last_status() << endl;
+        fout << "Last_Position :" ;
+        if (pl.get_last_pos() != NULL)  fout << pl.get_last_pos()->get_name() << endl;
+        else { fout << "NULL" << endl;}
+        fout << "- - - - " << endl; 
+
+        //¶ÔÍæ¼ÒµÀ¾ßµÄĞ´Èë
+        fout << "Bag member:" << endl; 
+        fout << "Size :" << pl.get_bag().getbag().size() << endl;
+        map<string,Info> bag_copy = pl.get_bag().getbag() ;
+        for (map<string,Info>::iterator p = bag_copy.begin() ; p != bag_copy.end() ; p++)
+        {
+            fout << p->first << " " << p->second->num << " " << p->second->size << endl;
+        }
+        fout << "- - - - " << endl; 
+
+
+        fout.close() ;
+        cout << "´æµµ³É¹¦£¡" << endl;
+        return true ;
+    }
+    else
+    {
+        cout << "´æµµÊ§°Ü£¡" << endl;
+        return false;
+    }
+    
 }
 
 void Game::read()
@@ -130,7 +278,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
             Load(global_save_file_name);//¶ÁÈ¡´æµµ
             return;
         }
-        else if(msg=="remake")
+        else if(msg=="restart")
         {
             Init();//ĞÂ½¨ÓÎÏ·
             return;
@@ -154,7 +302,7 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
     }
     if(this->stage==NOT_BEGIN)
     {
-        if(msg=="begin")
+        if(msg=="start")
         {
             cout<<"ÄãÊÇ"<<global_player_name<<"£¬ÊÇÕã´ó¼ÆËã»úÏµµÄÒ»ÃûÆÕÍ¨´ó¶şÑ§Éú£¬×¡ÔÚ±Ì·å¡£×òÍíÊÇÖÜÁù£¬ÊÒÓÑ¶¼³öÈ¥ÍæÁË£¬Ö»ÁôÏÂÄãÔÚËŞÉá¡£ÔçÉÏ¾Åµã£¬ÄãÏñ"
                     "Íù³£Ò»ÑùÄ£Ä£ºıºıµØĞÑÀ´£¬¶Ç×ÓºÜ¶ö¡£´°ÍâºÜ°µ£¬ËÆºõÓÖÊÇãìÖİÌØÓĞµÄÒõÌì£¬Äã¼òµ¥Íê³ÉÁËÏ´Êş£¬Õı×¼±¸È¥½ÌÑ§Â¥×ÔÏ°£¬Í»È»Ìıµ½½ÌÑ§Â¥ÍâÃæ"
@@ -164,12 +312,12 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
         }
         else if(msg=="load")
         {
-            cout<<"¶ÁÈ¡´æµµ¹¦ÄÜÉĞÎ´ÊµÏÖ£¡"<<endl;
+            Load(global_save_file_name);//¶ÁÈ¡´æµµ
             return;
         }
         else
         {
-            cout<<"ÇëÊäÈëbegin¿ªÊ¼ÓÎÏ·£¬»òÊäÈëload¶ÁÈ¡´æµµ£¡"<<endl;
+            cout<<"ÇëÊäÈëstart¿ªÊ¼ÓÎÏ·£¬»òÊäÈëload¶ÁÈ¡´æµµ£¡"<<endl;
             return;
         }
     }
@@ -212,6 +360,12 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
     else if(msg=="save")
     {
         Save(global_save_file_name);
+        return;
+    }
+    else if(msg=="restart")
+    {
+        cout << "ÖØĞÂ¿ªÊ¼ÓÎÏ·!\n" << endl;
+        Init();//ĞÂ½¨ÓÎÏ·
         return;
     }
     else if(msg=="goto east building")//Ç°Íù¶«½ÌÑ§Â¥£¨É¥Ê¬¿ß£©
@@ -1289,6 +1443,11 @@ void Game::process(string msg)//¸ù¾İpos£¬´¦ÀímsgÎÄ±¾,×î¹Ø¼üµÄ²¿·Ö£¬¸ù¾İµØµã£¬»®·
         else if((msg.find("pick")==0)&&msg.length()>=6)
         {
             string item = msg.substr(5, msg.length() - 5);
+            if(!Food::isFood(item)&&!Weapon::isWeapon(item))
+            {
+                cout << "²»´æÔÚ¸ÃÎïÆ·£¡" << endl;
+                return;
+            }
             if(!(item==global_bread_name||item==global_apple_name||
                 item==global_fork_name||item==global_knife_name||item==global_umbrella_name||item==global_gun_name
                 ||item==global_bloodsickle_name))

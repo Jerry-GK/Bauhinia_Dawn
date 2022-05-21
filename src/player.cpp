@@ -19,7 +19,18 @@ Player::Player()
     cur_pos=NULL;
     last_pos = NULL;
 }
-
+string Player::getname() const
+{
+    return name ;
+}
+int Player::getLevel() const 
+{
+    return level ;
+}
+int Player::getcurrentEXP() const 
+{
+    return currentEXP ;
+}
 int Player::getAggress() const
 {
     return aggress ;
@@ -151,7 +162,7 @@ void Player::change_money(const int m)
 }
 //new:
 
-void Player::set_pos(Position* p)
+void Player::set_pos( Position* p)
 {
     this->last_pos = this->cur_pos;
     this->cur_pos=p;
@@ -159,28 +170,85 @@ void Player::set_pos(Position* p)
     this->pl_cur_status=p->get_status().front();
 }
 
-void Player::set_status(PLAYER_STAGE s)
+void Player::set_last_pos(Position *p)
+{
+    this->last_pos = p;
+}
+
+void Player::set_status(const PLAYER_STAGE s)
 {
     this->pl_cur_status=s;
 }
+void Player::set_last_status(const PLAYER_STAGE s)
+{
+    this->pl_last_status = s ;
+}
 
+void Player::setname(const string a) 
+{
+    name = a ;
+}
+void Player::setLevel(const int a) 
+{
+    level = a ;
+}
+void Player::setcurrentEXP (const int a)
+{
+    currentEXP = a ;
+} 
+void Player::setAggress(const int a)
+{
+    aggress = a ;
+} 
+void Player::setMAXHP (const int a ) 
+{
+    MAXHP = a ;
+}
+void Player::setcurrentHP (const int a ) 
+{
+    currentHP = a ;
+}
+void Player::setspeed(const int a)
+{
+    speed = a ;
+} 
+void Player::setmove_capability(const int a)
+{
+    move_capability = a ;
+} 
+void Player::setmoney(const int a)
+{
+    money = a ;
+} 
+void Player::setcurrent_Veh(Vehicle * p)
+{
+    cur_veh = p ;
+}
+void Player::setcurrent_Wep(Weapon * p)
+{
+    cur_wep = p ;
+}
+void Player::setbag(const Bag a) 
+{
+    mybag = a ;
+}
 
-Position* Player::get_cur_pos()
+Position* Player::get_cur_pos() const
 {
     return this->cur_pos;
 }
 
-Position* Player::get_last_pos()
+Position* Player::get_last_pos() const 
 {
     return this->last_pos;
 }
 
-PLAYER_STAGE Player::get_cur_status()
+PLAYER_STAGE Player::get_cur_status() const
 {
     return pl_cur_status;
 }
 
-PLAYER_STAGE Player::get_last_status()
+PLAYER_STAGE Player::get_last_status() const
 {
     return pl_last_status;
 }

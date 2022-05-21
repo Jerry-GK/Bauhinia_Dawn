@@ -24,7 +24,8 @@ public:
     bool find(string item);
     void det (string item);
     bool add (string item , int item_size); //在背包内添加物品 成功则返回true
-    //这些函数用了迭代器指向bag.begin（）,不能加const
+    //这些函数用了迭代器指向bag.begin(),不能加const
     int getcurcapacity () const ;
     int getmaxcapacity () const ;
+    map <string,Info> getbag() const ;
 };  

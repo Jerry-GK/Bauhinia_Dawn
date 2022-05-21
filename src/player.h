@@ -47,27 +47,51 @@ public:
     ,const int getmove_capability , const int* getLevelEXPneed , const string getname  = "小泽" );//输入名字的初始化
 
     //player property
+    string getname() const ; 
+    int getLevel() const ;
+    int getcurrentEXP() const ; 
     int getAggress() const;  
     int getMAXHP() const;
     int getcurrentHP () const;  
     int getspeed () const ;
     int get_move_capability() const ;
-    int getweaponaggress() const;
     int getmoney() const;
+    int getweaponaggress() const; 
     Vehicle* get_vehicle() const;
     Weapon* get_weapon() const;
+    Bag get_bag() const;
+    Position* get_cur_pos() const;
+    Position *get_last_pos() const;
+    PLAYER_STAGE get_cur_status() const;
+    PLAYER_STAGE get_last_status() const;
+
 
     void changeHP(const int recovery); //恢复生命值
     void gainEXP(const int EXP);//获得经验值
     void levelUP(const int currentlevel);//升级
     void change_money(const int m);//money=money+m（可为负数）
-    Bag get_bag() const;
+    
+
+
     void set_pos(Position* p);
-    void set_status(PLAYER_STAGE s);
-    Position* get_cur_pos();
-    Position *get_last_pos();
-    PLAYER_STAGE get_cur_status();
-    PLAYER_STAGE get_last_status();
+    void set_last_pos(Position *p);
+    void set_status(const PLAYER_STAGE s);
+    void set_last_status(const PLAYER_STAGE s);
+    void setname(const string ) ;
+    void setLevel(const int ) ;
+    void setcurrentEXP (const int) ;
+    void setAggress(const int) ;
+    void setMAXHP (const int) ;
+    void setcurrentHP (const int) ;
+    void setspeed(const int) ;
+    void setmove_capability(const int) ;
+    void setweaponaggress(const int) ;
+    void setmoney(const int) ;
+    void setcurrent_Veh(Vehicle * );
+    void setcurrent_Wep(Weapon * );
+    void setbag(const Bag ) ;
+
+
     void show_state();//显示玩家属性状态
 
     //map

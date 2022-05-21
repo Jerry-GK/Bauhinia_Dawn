@@ -7,9 +7,9 @@ using namespace std;
 const string info_help =
 "\n主要游戏指令帮助：\n\
 -------------条件指令（需要在特定场景、按提示使用）-------------\n\
-begin: (游戏开始前)开始游戏\n\
+start: (游戏开始前)开始游戏\n\
 load: (游戏开始前)读取存档\n\
-goto <地点英文名>: 前往某个地方  (注：主线地点不能随意去。 east building(东教，丧尸窟), library(图书馆，武器库)为特殊支线地点，任何时候均可去)\n\
+goto <地点英文名>: 前往某个地方  (注：主线地点不能随意去。 east building(东教，丧尸窟), library(图书馆，武器库)为特殊支线地点，绝大多数情况均可去)\n\
 pick <物品名>: 拾取/购买身边的某种物品\n\
 take <交通工具英文名>: 乘坐身边的交通工具\n\n\
 -------------通用指令（绝大多数情况皆可使用）-------------\n\
@@ -23,6 +23,7 @@ get off <交通工具英文名>: 离开当前的交通工具\n\
 hint: 给出当前正确操作提示\n\
 clear: 清屏\n\
 save: 保存当前游戏进度(会覆盖之前的存档)\n\
+restart: 重新开始新的游戏(不会自动存档)\n\
 quit: 退出游戏\n\
 ↑↓方向键: 切换到历史上/下一条指令\n\n\
 -------------超级指令（仅供测试使用）-------------\n\
@@ -35,7 +36,7 @@ sudo recover: 回复至最大体力\n\
 const string info_end =
 "\n游戏已经结束，请输入你的选择：\n\
 load: 回到上一次保存的位置\n\
-remake: 重新开始游戏\n\
+restart: 重新开始游戏\n\
 quit: 退出游戏\n";
 
 //data-------------------------------------------------------------------------------------
@@ -149,8 +150,8 @@ extern const double global_fire_damage_return_rate = 0.3;
 //游戏
 const int global_jump_damage = 40;
 const double global_move_const = 0.04 ;
-const string global_map_open_cmd = "start ../doc/zjg_map.png";
-const string global_save_file_name = "../doc/save.txt";//也可以是二进制文件
+const string global_map_open_cmd = "start ../doc/figure/zjg_map.png";
+const string global_save_file_name = "../doc/data/data.txt";
 
 //物件字符串集合
 set<string> global_set_weapons={global_fork_name,global_knife_name,global_umbrella_name,global_bloodsickle_name,global_gun_name};

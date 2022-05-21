@@ -1,0 +1,26 @@
+Game Saved Data :
+Game member:
+stage :1
+partner :1
+enemy :1
+- - - - 
+Player member :
+Name :ะกิ๓
+Level :1
+CurrentEXP :0
+CurrentHP :787
+MAXHP :1000
+Speed :1
+Move_Capability :0
+Money :999000
+Current_Vehicle :NULL
+Current_Weapon :bloodsickle
+Current_Status :26
+Current_Position :library
+Last_Status :19
+Last_Position :wharf
+- - - - 
+Bag member:
+Size :1
+bloodsickle 1 12
+- - - - 

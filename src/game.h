@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 #include "game_map.h"
 #include "player.h"
 #include "vehicle.h"
@@ -22,6 +24,7 @@ private:
 public:
     void Init();//≥ı ºªØ
     bool Load(string filename);//∂¡»°¥Êµµ
+    inline void catchvalue (int beginpos , string get , stringstream & ss , int& answer) ;
 
     bool Save(string filename);//¥Êµµ
 
