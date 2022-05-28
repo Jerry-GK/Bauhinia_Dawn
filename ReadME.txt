@@ -13,13 +13,13 @@ File structure:
 
 To run:
 method 1；
-Run MUD.exe (static link version) in bin directly
+Run MUD_0.exe (static link version) in bin directly
 
 method 2 (recommended):
-Enter command "make" in terminal and run the executable file in /bin
+Enter command "make" in terminal and run the executable file bin/MUD.exe
 
 method 3:
-Enter command "g++ src/*.cpp -o bin/MUD" in terminal and run the executable file in /bin
+Enter command "g++ src/*.cpp -o bin/MUD" in terminal and run the executable file bin/MUD.exe
 
 method 4:
 open the folder with vscode and run using code runner 
