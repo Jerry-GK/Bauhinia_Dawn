@@ -9,7 +9,7 @@ Bag::Bag()
 void Bag::show()
 {
     cout << "背包信息：" << endl;
-    cout << "当前容量/最大容量：" << getcurcapacity() << "/" << getmaxcapacity() <<  endl;
+    cout << "剩余容量/最大容量：" << getmaxcapacity() - getcurcapacity() << "/" << getmaxcapacity() <<  endl;
     cout << "拥有：" << endl;
     if(bag.empty())
         cout<<"空"<<endl;

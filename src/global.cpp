@@ -1,6 +1,5 @@
 #include "global.h"
-#include <string>
-#include <set>
+
 using namespace std;
 
 //text-------------------------------------------------------------------------------------
@@ -33,6 +32,13 @@ sudo take <交通工具英文名>: 强制乘坐交通工具\n\
 sudo recover: 回复至最大体力\n\
 ";
 
+const string info_welcome=
+"++++++++++++++++++++++++++++++++++ Bauhinia_Dawn ++++++++++++++++++++++++++++++++++++++++++++\n"
+"欢迎来到《紫荆黎明》!\n"
+"version --2.0\n"
+"(请先输入start开始游戏；建议输入help查看指令说明；游戏过程中建议常用hint指令查看提示)\n"
+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+
 const string info_end =
 "\n游戏已经结束，请输入你的选择：\n\
 load: 回到上一次保存的位置\n\
@@ -45,25 +51,25 @@ quit: 退出游戏\n";
 const string global_player_name = "小泽";
 const int global_initial_speed = 1 ; // 初始移动速度
 const int global_initial_move_capability = 0 ;// 初始移动能力
-const int global_initial_agress = 5;
-const int global_initial_currentHP = 800 ;// 初始当前体力
-const int initial_MAXHP = 1000 ;// 初始最大体力
-const int global_initial_EXP[9] = {10,30,60,150,250,350,500,750,1000} ;// 升级所需经验
-const int global_initial_money = 999999;
-const int global_initial_Bag_occupancy = 999999;
+const int global_initial_agress = 1;
+const int global_initial_currentHP = 85;// 初始当前体力
+const int initial_MAXHP = 100 ;// 初始最大体力
+const int global_initial_EXP[9] = {20,30,60,150,250,350,500,750,1000} ;// 升级所需经验
+const int global_initial_money = 30;
+const int global_initial_Bag_occupancy = 40;
 
 //武器
 const string global_fork_name = "fork";
-const int global_fork_attack = 5;
+const int global_fork_attack = 3;
 const int global_fork_occupancy = 4;
 const int global_fork_cost = 7;
 const int global_fork_chance = 50 ;
 
 const string global_knife_name = "knife";
-const int global_knife_attack = 7;
+const int global_knife_attack = 5;
 const int global_knife_occupancy = 5;
 const int global_knife_cost = 12;
-const int global_knife_chance = 50 ;
+const int global_knife_chance = 40 ;
 
 const string global_umbrella_name = "umbrella";
 const int global_umbrella_attack = 3;
@@ -73,17 +79,17 @@ const int global_umbrella_chance = 50 ;
 const string global_umbrella_property = "water" ;
 
 const string global_gun_name = "gun";
-const int global_gun_attack = 18;
+const int global_gun_attack = 12;
 const int global_gun_occupancy = 10;
 const int global_gun_cost = 50;
-const int global_gun_chance = 50 ;
+const int global_gun_chance = 30 ;
 const string global_gun_property = "fire" ;
 
 const string global_bloodsickle_name = "bloodsickle" ;
 const int global_bloodsickle_attack = 8 ;
 const int global_bloodsickle_occupancy = 12 ;
-const int global_bloodsickle_cost = 999 ;
-const int global_bloodsickle_chance = 75 ;
+const int global_bloodsickle_cost = 80 ;
+const int global_bloodsickle_chance = 85 ;
 
 
 //载具
@@ -102,11 +108,11 @@ const int global_boat_mc = 1;
 
 //食物
 const string global_bread_name = "bread";
-const int global_bread_occupancy = 2;
+const int global_bread_occupancy = 3;
 const int global_bread_effect = 5;
 const int global_bread_cost = 4;
 const string global_apple_name = "apple";
-const int global_apple_occupancy = 1;
+const int global_apple_occupancy = 2;
 const int global_apple_effect = 2;
 const int global_apple_cost = 2;
 const string global_redtube_name = "red tube";
@@ -116,42 +122,43 @@ const int global_greentube_occupancy = 8;
 
 //丧尸
 const string global_ordinary_name = "ordinary zombie";
-const int global_ordinary_aggress = 7;
+const int global_ordinary_aggress = 6;
 const int global_ordinary_HP = 30;
-const int global_ordinary_def = 8;
+const int global_ordinary_def = 7;
 const int global_ordinary_EXP = 80;
 const int global_ordinary_money = 10;
-const int global_ordinary_chance = 50 ;
+const int global_ordinary_chance = 35 ;
 const string global_roll_name = "roll zombie";
-const int global_roll_aggress = 10;
-const int global_roll_HP = 40;
-const int global_roll_def = 8;
+const int global_roll_aggress = 8;
+const int global_roll_HP = 50;
+const int global_roll_def = 11;
 const int global_roll_EXP = 100;
 const int global_roll_money = 15;
-const int global_roll_chance = 50 ;
+const int global_roll_chance = 15 ;
 const string global_water_name = "water zombie";
 const int global_water_aggress = 15;
 const int global_water_HP = 50;
-const int global_water_def = 10;
+const int global_water_def = 9;
 const int global_water_EXP = 150;
 const int global_water_money = 30;
-const int global_water_chance = 2;
+const int global_water_chance = 3;
 const string global_water_property = "water" ;
 extern const string global_fire_name = "fire zombie" ;
 extern const int global_fire_aggress = 3 ;
-extern const int global_fire_HP = 70 ;
+extern const int global_fire_HP = 80 ;
 extern const int global_fire_def = 0 ;
 extern const int global_fire_EXP = 75 ;
 extern const int global_fire_money = 25 ;
-extern const int global_fire_chance = 50 ;
+extern const int global_fire_chance = 25 ;
 extern const string global_fire_property = "fire" ;
-extern const double global_fire_damage_return_rate = 0.3;
+extern const double global_fire_damage_return_rate = 0.35;
 
 //游戏
-const int global_jump_damage = 40;
-const double global_move_const = 0.04 ;
+const int global_jump_damage = 70;
+const double global_move_const = 0.08 ;
 const string global_map_open_cmd = "start ../doc/figure/zjg_map.png";
 const string global_save_file_name = "../doc/data/data.txt";
+const double global_stop_time = 1 ;
 
 //物件字符串集合
 set<string> global_set_weapons={global_fork_name,global_knife_name,global_umbrella_name,global_bloodsickle_name,global_gun_name};

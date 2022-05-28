@@ -90,7 +90,7 @@ int Weapon::wep_attack(Zombie* z)
         else if (z->getpro() == "water")
         {
             cout << "你的水属性武器对水属性丧尸的攻击收效甚微, 只造成了一小部分伤害！" << endl;
-            return 0.3*getattack();
+            return 0.2*getattack();
         } //water to water
     }
     else if (property == "fire")
@@ -102,7 +102,7 @@ int Weapon::wep_attack(Zombie* z)
         else if (z->getpro() == "fire")
         {
             cout << "你的火属性武器对火属性丧尸的攻击收效甚微，只造成了一小部分伤害！" << endl;
-            return 0.3*getattack();
+            return 0.2*getattack();
         } //fire to fire
     }
 
@@ -142,7 +142,7 @@ int Knife::wep_special_attack(Zombie* z)
 {
     cout << "说时迟那时快，你迅猛地用小刀轻易地砍下了丧尸一部分的身躯" << endl;
     z->attack_weaken(z->getaggress() * 0.5 ) ;
-    return getattack() + rand() % 8;
+    return getattack() + rand() % 6;
 }
 
 // umbrella ---------------------------------------

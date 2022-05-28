@@ -15,7 +15,7 @@ int main()
 	while(!g.is_quit())
 	{
 		g.read();
-	}
+	}		
 	g.quit();
 	system("pause");
 	return 0;

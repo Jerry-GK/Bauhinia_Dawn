@@ -79,7 +79,7 @@ int Player::getmoney() const
 void Player::equipWeapon(Weapon* a ) //装备武器
 {
     cur_wep =  a ;
-    cout << "装备了武器：" << a->getname() << " ,武器攻击力为：" << a->getattack() << endl << endl; 
+    cout << "装备了武器：" << a->getname() << " ,武器攻击力为：" << a->getattack() << endl;
 }
 
 void Player::disequipWeapon () //装备武器
@@ -89,7 +89,7 @@ void Player::disequipWeapon () //装备武器
         cout<<"当前未装备武器"<<endl;
         return;
     }
-    cout << "卸下了武器：" << cur_wep->getname() << " ,武器攻击力为：" << cur_wep->getattack() << endl << endl; 
+    cout << "卸下了武器：" << cur_wep->getname() << " ,武器攻击力为：" << cur_wep->getattack() << endl;
     delete cur_wep ;
     cur_wep = NULL ;
 }
@@ -146,8 +146,8 @@ void Player::gainEXP(const int EXP) //获得经验值
 void Player::levelUP(int currentlevel)//升级 
 {
     currentEXP -= global_initial_EXP[level - 1] ;
-    MAXHP += global_initial_EXP[level-1] / 10 ;
-    changeHP(0.1 * MAXHP) ;
+    MAXHP += global_initial_EXP[level-1] / 2 ;
+    changeHP(global_initial_EXP[level-1] / 5 + 0.1*MAXHP) ;
     level ++ ;
     aggress += 1 ;
     //升级会使得最大体力值提升 ，同时恢复10%最大体力值的体力 ， 攻击力 + 1
@@ -157,7 +157,7 @@ void Player::levelUP(int currentlevel)//升级
 void Player::change_money(const int m)
 {
     string str = m >= 0 ? "获得" : "花费";
-    cout << "你"<<str<<"了￥" << m << endl;
+    cout << "你"<<str<<"了￥" << abs(m) << endl;
     money = money + m;
 }
 //new:
@@ -167,7 +167,10 @@ void Player::set_pos( Position* p)
     this->last_pos = this->cur_pos;
     this->cur_pos=p;
     this->pl_last_status = pl_cur_status;
-    this->pl_cur_status=p->get_status().front();
+    if(p!=nullptr)
+        this->pl_cur_status=p->get_status().front();
+    else
+        this->pl_cur_status = UNKNOWN;
 }
 
 void Player::set_last_pos(Position *p)
@@ -358,6 +361,12 @@ void Player::pick(string item, PICK_MODE mode)//mode==0: pick ,mode==1: buy
     {
         Weapon *a = Weapon::new_wep(item);
         a->show();
+        if(this->get_bag().find((a->getname()))==true)
+        {
+            cout<<pick_str<<item<<"失败，"<<"背包内已有该武器，不必再次"<<pick_str<<endl;
+            delete a;
+            return;
+        }
         if(mode==BUY)
         {
             if(getmoney()<a->getcost())
@@ -452,11 +461,11 @@ void Player::drop(string item)
             }
             mybag.det(item);
         }
-        cout << "丢弃/赠予了 " << item << " ，当前背包剩余容量：" <<mybag.getmaxcapacity() - mybag.getcurcapacity() << endl;
+        cout << "赠予/丢弃了 " << item << " ，当前背包剩余容量：" <<mybag.getmaxcapacity() - mybag.getcurcapacity() << endl;
     }
     else
     {
-        cout << "丢弃/赠予失败！背包内不存在这个物品" << endl;
+        cout << "赠予/丢弃失败！背包内不存在该物品" << endl;
     }
 }
 
@@ -509,11 +518,16 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
 {
     int round = 1 ;
     string msg = "" ;
-    cout << "\n开始战斗 , 你要击败的是： " << z->getname() << endl; 
+    cout << "\n开始战斗 , 你要击败的是： " << z->getname() << endl;
+    delay() ;
     z->show();
     cout << "\n你当前状态：" << endl; 
     cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress 
          << "/" << this->getweaponaggress() << endl;
+    string wep_str = cur_wep==NULL?"赤手空拳":cur_wep->getname();
+    cout<<"当前使用武器："<<wep_str<<endl;
+
+    delay() ;
     while (1)
     {
         cout << "\nRound"<< round << "------------" << endl  << "你的选择操作是(fighting状态只能按提示操作):" << endl 
@@ -550,10 +564,11 @@ int Player::fight(Zombie *z) //打赢了返回2 逃跑返回1 被击败返回0
         z->attack(this);
         if ( !getcurrentHP() )//被丧尸打败
         {
-            cout << "\n很遗憾,你棋差一招，被丧尸击败了" << endl;
+            cout << "\n很遗憾,你棋差一招，被丧尸击败了，只能任由丧尸将你啃食，光亮逐渐消失..." << endl;
             return 0 ;
         }
         round++;
+        delay() ;
     }
 }
 
@@ -571,11 +586,12 @@ int Player::fight_many(vector <Zombie*> v_zome )
     {
         cout << i+1 << ".  " << v_zome[i]->getname() << " 攻击：" << v_zome[i]->getaggress() <<
         " 血量：" << v_zome[i]->getHP() << " 防御：" << v_zome[i]->getdef() << endl;
+        delay() ;
     }
-    cout << "\n你当前状态：" << endl; 
+    cout << "\n你当前状态：" << endl;
     cout << "HP/MAX = " << currentHP << "/" << MAXHP << "  当前力量/武器攻击力 = " << aggress 
          << "/" << this->getweaponaggress() << endl;
-
+    delay() ;
     while (1)
     {
         cout << "\nRound" << round << "------------" << endl << "你的选择操作是(fighting状态只能按提示操作):" << endl 
@@ -661,14 +677,16 @@ int Player::fight_many(vector <Zombie*> v_zome )
         //玩家被所有活着的丧尸轮流进攻
         for (vector<Zombie*>::iterator p = v_zome.begin() ; p != v_zome.end() ; p++ )
         {
+            delay() ;
             (*p)->attack(this) ;
             if ( !getcurrentHP() )//被丧尸打败
             {
-                cout << "\n很遗憾,你棋差一招，被丧尸击败了" << endl;
+                cout << "\n很遗憾,你棋差一招，被丧尸击败了，只能任由丧尸将你啃食，光亮逐渐消失..." << endl;
                 return 0 ;
             }
         } //死掉的丧尸自动被delete ;
         round++;
+        delay() ;
     }
 
 }
@@ -680,27 +698,43 @@ void Player::getdamage(const int damage)//被攻击
     {
         currentHP = 0 ;
     }
-    cout << "你受到了 " << damage << "点伤害 , 当前体力为： " << currentHP << endl; 
+    cout << "你受到了" << damage << "点伤害。你当前体力为： " << currentHP << endl;
 }
 
 void Player::attack(Zombie *z)
 {
+    delay() ;
     cout  << "你发动了攻击！" << endl;
-    int damage = rand()%30 + aggress + (cur_wep==NULL?0:cur_wep->getattack()) - z->getdef();
-    if ( damage>0 ) 
+    int damage = 0 ;
+    if ( rand()%20 + aggress + (cur_wep!=NULL ? cur_wep->getattack() : 0) > z->getdef() ) 
     {
         if(cur_wep!=NULL)
-            damage += cur_wep->wep_attack(z) - cur_wep->getattack();
-        z->getdamage(damage);
+            {damage += cur_wep->wep_attack(z) + aggress + rand() % 5 + 1 ;
+            z->getdamage(damage);}
+        else
+        {
+            z->getdamage(aggress) ;
+        }
         if(z->getname()==global_fire_name && (cur_wep==NULL || cur_wep->getname()!=global_umbrella_name))//用非伞武器攻击火丧尸，自身也收到伤害
         {
             cout << "你攻击了火丧尸，但并没有用水属性的伞，自身也被烧伤了！" << endl;
             getdamage(damage * global_fire_damage_return_rate);
         }
+        
     }
     else 
     {
-        cout << "你自身攻击力不足，未能击穿丧尸的护甲 , 不要放弃尝试！" << endl;
+        cout << "你攻击力较低，加上运气不好，这次攻击未能击穿丧尸的护甲 , 请继续尝试！" << endl;
     }
 
 }
+
+void Player::delay ()
+{
+    clock_t start_time;
+    start_time = clock(); //clock()返回当前时间
+    while ((clock()- start_time) <global_stop_time * CLOCKS_PER_SEC)
+    {
+
+    }
+}    

@@ -35,6 +35,4 @@
 /.vscode
 
 #Other folders or files
-*.pdf
-*.doc
-*.docx
+/report

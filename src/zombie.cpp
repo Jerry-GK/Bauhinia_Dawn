@@ -92,7 +92,7 @@ void Zombie::getdamage(const int damage)//被攻击
     {
         HP = 0 ;
     }
-    cout << "僵尸受到了 " << damage << "点伤害 , 当前生命值为： " << HP << endl; 
+    cout << "丧尸受到了 " << damage << "点伤害 , 丧尸当前生命值为： " << HP << endl; 
 }
 
 void Zombie::attack_weaken(int a)//attack debuff
@@ -100,12 +100,12 @@ void Zombie::attack_weaken(int a)//attack debuff
     if (aggress > a)
     {
         aggress -= a ;
-        cout << "僵尸的攻击力被削弱了 " << a << " 点 , 当前攻击力为：" << aggress << endl;
+        cout << "丧尸的攻击力被削弱了 " << a << " 点 , 丧尸当前攻击力为：" << aggress << endl;
     }
     else
     {
         aggress = 0;
-        cout << "僵尸的攻击力被削弱了 " << aggress << " 点 , 当前攻击力为：" << aggress << endl;
+        cout << "丧尸的攻击力被削弱了 " << aggress << " 点 , 丧尸当前攻击力为：" << aggress << endl;
     }
 }
 void Zombie::def_weaken(int b)//def debuff
@@ -113,12 +113,12 @@ void Zombie::def_weaken(int b)//def debuff
     if (def > b)
     {
         def -= b ;
-        cout << "僵尸的防御力被削弱了 " << b << " 点 , 当前防御力为：" << def << endl;
+        cout << "丧尸的防御力被削弱了 " << b << " 点 , 丧尸当前防御力为：" << def << endl;
     }
     else
     {
         def = 0;
-        cout << "僵尸的防御力被削弱了 " << def << " 点 , 当前防御力为：" << def << endl;
+        cout << "丧尸的防御力被削弱了 " << def << " 点 , 丧尸当前防御力为：" << def << endl;
     }
 }
 
@@ -137,13 +137,13 @@ void Roll_Zombie::special_attack(Player *p)
     cout << "\n" <<getname() << "竟然发动了特殊攻击,使用沉寂多年的卷王之力！" << endl;
     if (p->get_weapon() != NULL)
     {   
-        cout << "你的武器突然不受控制,攻击了你一下然后掉在了地上" << endl; 
+        cout << "你的武器突然不受控制,攻击了你一下然后掉落了! (你现在赤手空拳，必须重新use才能使用武器)" << endl; 
         p->getdamage (getaggress() + p->getweaponaggress() / 4 ) ;
         if (p->getcurrentHP()) {p->disequipWeapon() ;} //防止角色死亡了还丢弃武器！
     }
     else
     {
-        cout << "它控制了教室里的书本，一齐向你飞来" << endl;
+        cout << "它控制了教室里的书本，一齐向你飞来，对你造成了大量伤害！" << endl;
         p->getdamage (3*getaggress() + rand() % 5) ;
     }
     
@@ -152,7 +152,7 @@ void Roll_Zombie::special_attack(Player *p)
 void Roll_Zombie::show()
 {
     Zombie::show();
-    cout << "卷王丧尸手里拿着一本书，看起来要卷死你" << endl;
+    cout << "卷王丧尸手里拿着一本厚厚的《C++ Primer》，看起来要卷死你" << endl;
 }
 
 //water  zombie  -------------------------------------------
@@ -179,7 +179,7 @@ Fire_Zombie::Fire_Zombie():Zombie
 
 void Fire_Zombie::special_attack(Player *p)
 {
-    cout << "\n" << getname() << "竟然朝你冲了过来，BOOM ! 你们各损失了一半的血量！" << endl;
+    cout << "\n" << getname() << "竟然猛地朝你冲了过来，BOOM !好烫！ 这种自杀式的攻击让你们各损失了一半的血量！" << endl;
     p->getdamage((p->getcurrentHP()+1)/2);
     this->getdamage((this->getHP()+1)/2) ;
 }
@@ -187,5 +187,5 @@ void Fire_Zombie::special_attack(Player *p)
 void Fire_Zombie::show()
 {
     Zombie::show();
-    cout << "火丧尸身上燃烧着烈火，一接近就会被烧伤，除非你用的是长长的带着水珠的伞。" << endl;
+    cout << "火丧尸身上燃烧着烈火，一接近就会被烧伤，除非你用的是长长的湿漉漉的雨伞。" << endl;
 }

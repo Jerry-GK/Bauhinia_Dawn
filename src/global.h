@@ -5,6 +5,7 @@ using namespace std;
 
 extern const string info_help;
 extern const string info_end;
+extern const string info_welcome;
 
 //角色：
 extern const string global_player_name;
@@ -117,6 +118,7 @@ extern const int global_jump_damage;
 extern const double global_move_const;
 extern const string global_map_open_cmd;
 extern const string global_save_file_name;
+extern const double global_stop_time;
 
 //物件字符串集合
 extern set<string> global_set_weapons;

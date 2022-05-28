@@ -11,6 +11,7 @@
 #include <sstream>
 #include <stdlib.h> 
 #include <math.h>
+#include <time.h>
 
 using namespace std;
 
@@ -46,6 +47,8 @@ public:
     Player(const int getcurrentHP ,const int getMAXHP, const int getspeed 
     ,const int getmove_capability , const int* getLevelEXPneed , const string getname  = "小泽" );//输入名字的初始化
 
+    static void delay();
+    
     //player property
     string getname() const ; 
     int getLevel() const ;
