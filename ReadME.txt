@@ -12,7 +12,7 @@ File structure:
 /.vscode: json settings about vscode, can be ignored if not used.
 
 To run:
-method 1；
+method 1
 Run MUD_0.exe (static link version) in bin directly
 
 method 2 (recommended):

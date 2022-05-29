@@ -12,7 +12,10 @@ void Bag::show()
     cout << "剩余容量/最大容量：" << getmaxcapacity() - getcurcapacity() << "/" << getmaxcapacity() <<  endl;
     cout << "拥有：" << endl;
     if(bag.empty())
-        cout<<"空"<<endl;
+        {
+            cout<<"空"<<endl;
+            return ;
+        }
     for (map<string,Info>::iterator p = bag.begin() ; p!= bag.end() ; p++)
     {
         cout << p->first << "*" << p->second->num << "   占用：" << (p->second->size)*(p->second->num)<< endl;

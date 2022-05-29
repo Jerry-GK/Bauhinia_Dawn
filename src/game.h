@@ -4,11 +4,8 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-#include "game_map.h"
 #include "player.h"
-#include "vehicle.h"
-#include "zombie.h"
-#include "global.h"
+
 
 class Game
 {

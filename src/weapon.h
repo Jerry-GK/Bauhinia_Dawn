@@ -17,19 +17,22 @@ private:
     string property ;
 public:
     Weapon(const string setname, const int setattack, const int setoccupancy,const int setcost ,const int chance , const string setpro );
-    void attack_buff(int a) ;
+    void attack_buff(const int a) ;
+
     string getname() const;
     int getattack() const;
     int getoccupancy() const;
     int getcost() const;
     int getchance() const ;
+
     virtual void show() const;
     virtual ~Weapon() = 0;
-    int wep_attack(Zombie* z);
     virtual int wep_special_attack(Zombie *z) = 0;
+
+    int wep_attack(Zombie* z);
     static bool isWeapon(string item) ;
     static Weapon *new_wep(string name);
-};
+};  
 
 class Fork:public Weapon
 {

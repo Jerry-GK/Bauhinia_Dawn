@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <iostream>
 #include "weapon.h"
 #include "bag.h"
 #include "zombie.h"
@@ -9,9 +7,10 @@
 #include "global.h"
 #include "food.h"
 #include <sstream>
-#include <stdlib.h> 
 #include <math.h>
 #include <time.h>
+#include <string>
+#include <iostream>
 
 using namespace std;
 
